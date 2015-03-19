@@ -96,6 +96,7 @@ _TeamCity*
 *.dotCover
 
 # NCrunch
+*.ncrunch*
 _NCrunch_*
 .*crunch*.local.xml
 
@@ -181,3 +182,13 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
