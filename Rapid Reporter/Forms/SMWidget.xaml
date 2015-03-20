@@ -75,6 +75,16 @@
                             <Image Source="32raw.png" Width="20" Height="20"/>
                         </MenuItem.Icon>
                     </MenuItem>
+                    <MenuItem Name="PauseSession" Header="Pause Session" Click="PauseSession_Click" IsEnabled="False">
+                        <MenuItem.Icon>
+                            <Image Source="32raw.png" Width="20" Height="20"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Name="ResumeSession" Header="Resume a Session" Click="ResumeSession_Click" IsEnabled="True">
+                        <MenuItem.Icon>
+                            <Image Source="32raw.png" Width="20" Height="20"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </ContextMenu>
             </Button.ContextMenu>
         </Button>

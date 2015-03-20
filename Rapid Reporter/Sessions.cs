@@ -63,6 +63,23 @@ namespace Rapid_Reporter
             UpdateNotes("Environment", Environment);
             UpdateNotes("Versions", Versions);
         }
+
+        internal bool ResumeSession()
+        {
+            Logger.Record("[ResumeSession]: Session configuration starting", "Session", "info");
+
+            var csvFile = SelectSessionCsvForOpen();
+            if (string.IsNullOrWhiteSpace(csvFile)) return false;
+            LoadCsvIntoSession(csvFile);
+            if (string.IsNullOrWhiteSpace(Tester) || string.IsNullOrWhiteSpace(Charter) ||
+                string.IsNullOrWhiteSpace(Versions) || string.IsNullOrWhiteSpace(Environment) ||
+                string.IsNullOrWhiteSpace(ScenarioId)) return false;
+            _sessionFile = Path.GetFileName(csvFile);
+            WorkingDir = Path.GetDirectoryName(csvFile) + @"\";
+            _sessionFileFull = csvFile; 
+            return true;
+        }
+
         public void CloseSession() // Not closing directly, we first finalize the session
         {
             Logger.Record("[CloseSession]: Session closing...", "Session", "info");
@@ -131,10 +148,19 @@ namespace Rapid_Reporter
                 FileName = str1,
                 InitialDirectory = WorkingDir
             };
-            var saveFileDialog2 = saveFileDialog1;
-            if (saveFileDialog2.ShowDialog() == DialogResult.OK)
-                str2 = saveFileDialog2.FileName;
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                str2 = saveFileDialog1.FileName;
             return str2;
+        }
+
+        private string SelectSessionCsvForOpen()
+        {
+            var openFileDialog = new OpenFileDialog()
+            {
+                DefaultExt = "csv",
+                InitialDirectory = WorkingDir
+            };
+            return openFileDialog.ShowDialog() == DialogResult.OK ? openFileDialog.FileName : "";
         }
 
         private static void RemoveOldCsvFile(string csvFileFull)
@@ -172,10 +198,10 @@ namespace Rapid_Reporter
                     var imgCount = 0;
                     var ptnCount = 0;
                     var t = "th";
-                    Htmlstrings.HtmlTitle = string.Format("{0}{1}", ScenarioId, Htmlstrings.HtmlTitle);
+                    var title = string.Format("{0}{1}", ScenarioId, Htmlstrings.HtmlTitle);
                     File.Delete(htmlFileFull);
                     var htmlTop = string.Format("{0}{1}{2}{3}{4}{5}{1}{6}", (object)Htmlstrings.AHtmlHead,
-                        (object) Htmlstrings.HtmlTitle, (object) Htmlstrings.BTitleOut, (object) Htmlstrings.CStyle,
+                        (object)title, (object)Htmlstrings.BTitleOut, (object)Htmlstrings.CStyle,
                         (object) Htmlstrings.DJavascript, (object) Htmlstrings.EBody, (object) Htmlstrings.GTable);
                     var topNotes = "";
                     var bottomNotes = "";
@@ -241,6 +267,52 @@ namespace Rapid_Reporter
                 }
             } while (exDrRetry);
             Logger.Record("[CSV2HTML]: HTML Report built, done.", "Session", "info");
+        }
+
+        private void LoadCsvIntoSession(string csvFile)
+        {
+            Logger.Record("[LoadCsvIntoSession]: Grabbing CSV file variables", "Session", "info");
+
+            bool exDrRetry;
+            do
+            {
+                exDrRetry = false;
+                try
+                {
+                    foreach (var line in File.ReadAllLines(csvFile, Encoding.UTF8))
+                    {
+                        if ("" == line) continue;
+                        var thisLine = line.Split(',');
+                        if (thisLine.Length <= 2) continue;
+                        var note = thisLine[2].Replace("\"", "");
+                        switch (thisLine[1])
+                        {
+                            case @"Session Reporter":
+                                Tester = note;
+                                StartingTime = DateTime.Parse(thisLine[0]);
+                                break;
+                            case @"Scenario ID":
+                                ScenarioId = note;
+                                break;
+                            case @"Session Charter":
+                                Charter = note;
+                                break;
+                            case @"Environment":
+                                Environment = note;
+                                break;
+                            case @"Versions":
+                                Versions = note;
+                                break;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Record("[LoadCsvIntoSession]: EXCEPTION reached - Session Report file could not be read (" + csvFile + ")", "Session", "error");
+                    exDrRetry = Logger.FileErrorMessage(ex, "LoadCsvIntoSession", csvFile);
+                }
+            } while (exDrRetry);
+            Logger.Record("[LoadCsvIntoSession]: Grabbing CSV file variables done.", "Session", "info");
         }
     }
 }
