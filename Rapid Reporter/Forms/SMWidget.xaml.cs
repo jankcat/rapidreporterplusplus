@@ -105,11 +105,14 @@ namespace Rapid_Reporter.Forms
             ExitApp();
         }
         // Before closing the window, we have to close the session and the RTF note
-        private void ExitApp()
+        private void ExitApp(bool dontFinishSession = false)
         {
-            // Session
-            Logger.Record("[ExitApp]: Closing Session...", "SMWidget", "info");
-            _currentSession.CloseSession();
+            if (!dontFinishSession)
+            {
+                // Session
+                Logger.Record("[ExitApp]: Closing Session...", "SMWidget", "info");
+                _currentSession.CloseSession();
+            }
             // PT Note
             Logger.Record("[ExitApp]: Closing PlainText Note (force = true)...", "SMWidget", "info");
             _ptn.ForceClose = true; // We keep the RTF open (hidden), so we have to force it out
@@ -236,15 +239,18 @@ namespace Rapid_Reporter.Forms
         }
         
         // The function below will change the visuals of the application at the different stages (tester/charter/notes state based behavior)
-        private void StateMove(Session.SessionStartingStage newStage)
+        private void StateMove(Session.SessionStartingStage newStage, bool skipStartSession = false)
         {
             Logger.Record("[StateMove]: Session Stage now: " + _currentStage.ToString(), "SMWidget", "info");
             _currentStage = newStage;
             switch (_currentStage)
             {
                 case Session.SessionStartingStage.Tester:
-                    NoteType.Text = "Reporter:"; prevType.Text = ""; nextType.Text = "";
-                    _prevNoteType = 1; _nextNoteType = _currentSession.NoteTypes.Length - 1;
+                    NoteType.Text = "Reporter:";
+                    prevType.Text = ""; 
+                    nextType.Text = "";
+                    _prevNoteType = 1;
+                    _nextNoteType = _currentSession.NoteTypes.Length - 1;
                     NoteType.FontSize = 23;
                     Logger.Record("\t[StateMove]: Session Stage moving -> Tester", "SMWidget", "info");
                     break;
@@ -270,8 +276,13 @@ namespace Rapid_Reporter.Forms
                     prevType.Text = "? " + _currentSession.NoteTypes[_prevNoteType] + ":";
                     nextType.Text = "? " + _currentSession.NoteTypes[_nextNoteType] + ":";
                     NoteType.FontSize = 21;
-                    _currentSession.StartSession(); ProgressGo(90); t90.IsChecked = true;
-                    ScreenShot.IsEnabled = true; RTFNoteBtn.IsEnabled = true;
+                    if (!skipStartSession) _currentSession.StartSession(); 
+                    ProgressGo(90); 
+                    t90.IsChecked = true;
+                    ScreenShot.IsEnabled = true; 
+                    RTFNoteBtn.IsEnabled = true;
+                    ResumeSession.IsEnabled = false;
+                    PauseSession.IsEnabled = true;
                     // Change the icon of the image of the buttons, to NOT appear disabled.
                     CloseButton.ToolTip = "Save and Quit";
                     SaveAndQuitOption.Header = "Save and Quit";
@@ -559,6 +570,28 @@ namespace Rapid_Reporter.Forms
             CloseButton_Click(sender, e);
         }
 
+        private void ResetSession()
+        {
+            //reset
+            _currentNoteType = 0;		// The actual types are controlled by the Session class.
+            _prevNoteType = 0;
+            _nextNoteType = 0; // Used for the hints about the next note up or down.
+            _currentScreenshot = 1;		// The number of the screenshot (increases by 1). Helps putting them in order, and finding them between multiple the files.
+            _screenshotName = "";		// Attached to a Session Note.
+            PlainTextNoteName = "";			// Attached to a Session Note. Public because it is used *directly* by the RTFNote
+            IsPlainTextDiagOpen = false;
+            ResumeSession.IsEnabled = true;
+            PauseSession.IsEnabled = false;
+            _currentStage = Session.SessionStartingStage.Tester;
+            _recurrenceTimer = new Timer();
+            _currentSession = new Session();    // The session managing class
+            SMWidgetForm.Title = System.Windows.Forms.Application.ProductName;
+            SetWorkingDir(_currentSession.WorkingDir);
+            _recurrenceTimer.Tick += TimerEventProcessor; // this is the function called everytime the timer expires
+            _recurrenceTimer.Interval = 90 * 1000; // 30 times 1 second (1000 milliseconds)
+            _recurrenceTimer.Start();
+        }
+
         private void SaveAndNewOption_Click(object sender, RoutedEventArgs e)
         {
             // Session
@@ -571,30 +604,9 @@ namespace Rapid_Reporter.Forms
             _ptn.Close();
 
             Logger.Record("[SaveAndNewOption_Click]: Resetting session variables", "SMWidget", "info");
-            //reset
-            _currentNoteType = 0;		// The actual types are controlled by the Session class.
-            _prevNoteType = 0; 
-            _nextNoteType = 0; // Used for the hints about the next note up or down.
-            _currentScreenshot = 1;		// The number of the screenshot (increases by 1). Helps putting them in order, and finding them between multiple the files.
-            _screenshotName = "";		// Attached to a Session Note.
-            PlainTextNoteName = "";			// Attached to a Session Note. Public because it is used *directly* by the RTFNote
-            IsPlainTextDiagOpen = false;
-            _currentStage = Session.SessionStartingStage.Tester;
-            _recurrenceTimer = new Timer();
-            _currentSession  = new Session();    // The session managing class
-            //_ptn = new PlainTextNote();                // The enhanced note window
-
+            ResetSession();
             Logger.Record("[SaveAndNewOption_Click]: Restarting session", "SMWidget", "info");
-
-            SMWidgetForm.Title = System.Windows.Forms.Application.ProductName;
-            SetWorkingDir(_currentSession.WorkingDir);
             StateMove(Session.SessionStartingStage.Tester);
-
-            // Some of the actions in the tool are recurrent. We do them every 30 seconds.
-            _recurrenceTimer.Tick += TimerEventProcessor; // this is the function called everytime the timer expires
-            _recurrenceTimer.Interval = 90 * 1000; // 30 times 1 second (1000 milliseconds)
-            _recurrenceTimer.Start();
-
             NoteContent.Focus();
         }
 
@@ -623,6 +635,22 @@ namespace Rapid_Reporter.Forms
             if (obj != null)
                 return (System.Windows.Media.Color)obj;
             return System.Windows.Media.Color.FromArgb(byte.MaxValue, (byte)0, (byte)104, byte.MaxValue);
+        }
+
+        private void ResumeSession_Click(object sender, RoutedEventArgs e)
+        {
+            ResetSession();
+            if (!_currentSession.ResumeSession()) return;
+            StateMove(Session.SessionStartingStage.Notes, true);
+            _currentSession.UpdateNotes("Note", "[RR++]: Resuming Session...");
+            NoteContent.Focus();
+        }
+
+        private void PauseSession_Click(object sender, RoutedEventArgs e)
+        {
+            Logger.Record("[PauseSession_Click]: Pausing Session...", "SMWidget", "info");
+            _currentSession.UpdateNotes("Note", "[RR++]: Pausing Session...");
+            ExitApp(true);
         }
     }
 }
