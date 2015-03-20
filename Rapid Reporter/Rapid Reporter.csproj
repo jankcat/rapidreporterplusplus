@@ -126,6 +126,7 @@
     <Compile Include="HTML\HTMLEmbedder.cs" />
     <Compile Include="HTML\Htmlstrings.cs" />
     <Compile Include="KeyboardHook.cs" />
+    <Compile Include="RegUtil.cs" />
     <Compile Include="ScreenShot.cs" />
     <Compile Include="Logger.cs" />
   </ItemGroup>

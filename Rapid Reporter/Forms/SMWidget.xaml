@@ -14,15 +14,12 @@
                 <MenuItem Header="Stop timer now!"  Name="t0" Click="ProgressTimer_Click" IsCheckable="True" Checked="timer_Checked"><MenuItem.Icon><Image Source="iconstopped.png" /></MenuItem.Icon></MenuItem>
                 <MenuItem.Icon><Image Source="icontimer.png" /></MenuItem.Icon>
             </MenuItem>
-            <MenuItem Name="OpenFolder" Header="Open working folder">
-                <MenuItem Header="" Name="FolderName" Click="WorkingFolder_Click"></MenuItem>
-                <MenuItem.Icon><Image Source="iconsession.png" Width="16" /></MenuItem.Icon>
-            </MenuItem>
             <MenuItem Name="SetShotHotKey" Header="Ctrl+Alt+F9 for ScreenShots" IsCheckable="True" IsChecked="True" Checked="SetShotHotKey_Checked" Unchecked="SetShotHotKey_Unchecked"><MenuItem.Icon><Image Source="iconshot.png" /></MenuItem.Icon></MenuItem>
+            <MenuItem Name="ColorPicker" Header="Pick Color" Click="ColorPicker_OnClick"><MenuItem.Icon><Image Source="iconshot.png" /></MenuItem.Icon></MenuItem>
             <MenuItem Name="AboutBox" Header="About..." Click="AboutBox_Click"><MenuItem.Icon><Image Source="RapidReporter.ico" Width="16" /></MenuItem.Icon></MenuItem>
         </ContextMenu>
     </Window.ContextMenu>
-    <Grid Background="#FF0068FF"> <!-- We want the application to shine in view, tester never has to look for it-->
+    <Grid Name="MainGrid"  Background="#FF0068FF"> <!-- We want the application to shine in view, tester never has to look for it-->
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20" /> <!-- Slider -->
             <ColumnDefinition Width="25" /> <!-- Attachment buttons -->

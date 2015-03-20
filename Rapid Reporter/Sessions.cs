@@ -2,10 +2,12 @@
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Forms;
 using Rapid_Reporter.HTML;
 using MessageBox = System.Windows.MessageBox;
+
 // ReSharper disable EmptyGeneralCatchClause
 
 namespace Rapid_Reporter
@@ -28,7 +30,7 @@ namespace Rapid_Reporter
         public string Environment = "";      // Configured in runtime.
         public string Versions = "";      // Configured in runtime.
         // The types of comments. This can be overriden from command line, so every person can use his own terminology or language
-        public string[] NoteTypes = new[] { "Prerequisite", "Test", "Success", "Bug/Issue", "Note", "Follow Up", "Summary" };
+        public string[] NoteTypes = { "Prerequisite", "Test", "Success", "Bug/Issue", "Note", "Follow Up", "Summary" };
 
         // Session files:
         public string WorkingDir = Directory.GetCurrentDirectory() + @"\";  // File to write the session to
@@ -73,9 +75,6 @@ namespace Rapid_Reporter
                             duration.Hours.ToString(CultureInfo.InvariantCulture).PadLeft(2, '0') + ":" +
                             duration.Minutes.ToString(CultureInfo.InvariantCulture).PadLeft(2, '0') + ":" +
                             duration.Seconds.ToString(CultureInfo.InvariantCulture).PadLeft(2, '0'));
-                MessageBox.Show(
-                "RapidReporter++ will now convert your test session into a lovely HTML file. You will be alerted in a few seconds when this process is complete.",
-                "Converting to HTML File");
                 Logger.Record("[CloseSession]: Starting csv to html method...", "Session", "info");
                 Csv2Html(_sessionFileFull, false);
             }
@@ -91,7 +90,7 @@ namespace Rapid_Reporter
         public void UpdateNotes(int type, string note, string screenshot, string rtfNote)
         {
             UpdateNotes(NoteTypes[type], note, screenshot, rtfNote);
-            Logger.Record("[UpdateNotes isss]: Note added to session log. Attachments: (" + (screenshot.Length > 0).ToString() + " | " + (rtfNote.Length > 0).ToString() + ")", "Session", "info");
+            Logger.Record("[UpdateNotes isss]: Note added to session log. Attachments: (" + (screenshot.Length > 0) + " | " + (rtfNote.Length > 0) + ")", "Session", "info");
         }
         public void UpdateNotes(string type, string note, string screenshot = "", string rtfNote = "")
         {
@@ -109,7 +108,7 @@ namespace Rapid_Reporter
             { exDrRetry = false;
                 try
                 {
-                    File.AppendAllText(_sessionFileFull, note, System.Text.Encoding.UTF8);
+                    File.AppendAllText(_sessionFileFull, note, Encoding.UTF8);
                 }
                 catch (Exception ex)
                 {
@@ -119,47 +118,69 @@ namespace Rapid_Reporter
             } while (exDrRetry);
         }
 
-        //TODO: Make this better...
+        private string DiscoverSavePath(string csvFile)
+        {
+            var str1 =
+                (new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars())).Aggregate(
+                    string.Format("{0} - {1}.htm", Path.GetFileNameWithoutExtension(csvFile), ScenarioId),
+                    (current, c) => current.Replace(c.ToString(CultureInfo.InvariantCulture), ""));
+            var str2 = WorkingDir + str1;
+            var saveFileDialog1 = new SaveFileDialog
+            {
+                DefaultExt = "htm",
+                FileName = str1,
+                InitialDirectory = WorkingDir
+            };
+            var saveFileDialog2 = saveFileDialog1;
+            if (saveFileDialog2.ShowDialog() == DialogResult.OK)
+                str2 = saveFileDialog2.FileName;
+            return str2;
+        }
+
+        private static void RemoveOldCsvFile(string csvFileFull)
+        {
+            try
+            {
+                File.Delete(csvFileFull);
+            }
+            catch
+            {
+            }
+        }
+
+        private static string BuildTableRow(string rowType, string entryType, string timestamp, string value)
+        {
+            return
+                string.Format(
+                    "<tr class=\"{0}\"> <{1} class=\"timestamp\">{2}</{1}><{1} class=\"notetype\">{0}</{1}><{1}>{3}</{1}></tr>\n",
+                    entryType, rowType, timestamp, value);
+        }
+
         public void Csv2Html(string csvFile, bool relativePath)
         {
             Logger.Record("[CSV2HTML]: HTML Report building", "Session", "info");
-            bool exDrRetry;
-            var htmlFileBufferPopups = "";
-
-            // Find out if we are relative or not. Make us not relative
             var csvFileFull = relativePath ? WorkingDir + csvFile : csvFile;
-
-            // format the file name for the save box and show it
-            var htmlFileShort = Path.GetFileNameWithoutExtension(csvFile);
-            htmlFileShort = string.Format("{0} - {1}.htm", htmlFileShort, ScenarioId);
-
-            //Remove any invalid characters
-            var invalidChars = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
-            htmlFileShort = invalidChars.Aggregate(htmlFileShort, (current, c) => current.Replace(c.ToString(CultureInfo.InvariantCulture), ""));
-
-            // if they canceled, we go with the default
-            var htmlFileFull = WorkingDir + htmlFileShort;
-            var saveDlg = new SaveFileDialog { DefaultExt = "htm", FileName = htmlFileShort, InitialDirectory = WorkingDir };
-            if (saveDlg.ShowDialog() == DialogResult.OK)
-                htmlFileFull = saveDlg.FileName;
+            var htmlFileFull = DiscoverSavePath(csvFile);
+            bool exDrRetry;
 
             do
             {
                 exDrRetry = false;
-                
+                var htmlFileBufferPopups = "";
                 try
                 {
                     var imgCount = 0;
                     var ptnCount = 0;
                     var t = "th";
-                    Htmlstrings.HtmlTitle = _sessionFile;
+                    Htmlstrings.HtmlTitle = string.Format("{0}{1}", ScenarioId, Htmlstrings.HtmlTitle);
                     File.Delete(htmlFileFull);
-                    var htmlFileBuffer = string.Format("{0}{1}{2}{3}{4}<h1>{1}: Session Report</h1><!--[if IE]><h5>For best results, use Chrome or Firefox.</h5><![endif]-->{5}{6}",
-                                                       Htmlstrings.AHtmlHeader, ScenarioId, Htmlstrings.CJavascript,
-                                                       Htmlstrings.DStyle, Htmlstrings.GHtmlBody1,
-                                                       Htmlstrings.ToggleAuto, Htmlstrings.JHtmlBodytable1);
+                    var htmlTop = string.Format("{0}{1}{2}{3}{4}{5}{1}{6}", (object)Htmlstrings.AHtmlHead,
+                        (object) Htmlstrings.HtmlTitle, (object) Htmlstrings.BTitleOut, (object) Htmlstrings.CStyle,
+                        (object) Htmlstrings.DJavascript, (object) Htmlstrings.EBody, (object) Htmlstrings.GTable);
+                    var topNotes = "";
+                    var bottomNotes = "";
 
-                    foreach (var line in File.ReadAllLines(csvFileFull, System.Text.Encoding.UTF8))
+                    foreach (var line in File.ReadAllLines(csvFileFull, Encoding.UTF8))
 					{
                         if ("" == line) continue;
                         var note = ""; 
@@ -184,21 +205,25 @@ namespace Rapid_Reporter
                             }
                         }
 
-					    htmlFileBuffer += string.Format(
-					            "<tr class=\"{0}\"> <{1} class=\"timestamp\">{2}</{1}><{1} class=\"notetype\">{0}</{1}><{1}>{3}</{1}></tr>\n",
-					            thisLine[1], t, thisLine[0], note);
+					    if (thisLine[1] == "Type" || thisLine[1] == "Session Reporter" ||
+					        (thisLine[1] == "Scenario ID" || thisLine[1] == "Session Charter") ||
+					        (thisLine[1] == "Environment" || thisLine[1] == "Versions" || thisLine[1] == "Summary"))
+					    {
+					        topNotes += BuildTableRow(t, thisLine[1], thisLine[0], note);
+					    }
+					    else
+					    {
+					        bottomNotes += BuildTableRow(t, thisLine[1], thisLine[0], note);
+					    }
                         t = "td";
                     }
-                    htmlFileBuffer += Htmlstrings.MHtmlBodytable2;
-                    htmlFileBuffer += htmlFileBufferPopups;
-                    htmlFileBuffer += Htmlstrings.PHtmlFooter;
-                    File.WriteAllText(htmlFileFull, htmlFileBuffer, System.Text.Encoding.UTF8);
-                    // Thread.Sleep(150); // Old sleep when file was being written line by line and issues were showing up
+                    topNotes = topNotes + BuildTableRow("td", "", "", "");
+                    var output = htmlTop +
+                                 string.Format("{0}{1}{2}{3}{4}", topNotes, bottomNotes,
+                                     Htmlstrings.JTableEnd, htmlFileBufferPopups, Htmlstrings.MHtmlEnd);
 
-                    // remove old CSV file if everything worked well.
-                    try { 
-                        File.Delete(csvFileFull);
-                    } catch { } // supress delete errors like access denied etc 
+                    File.WriteAllText(htmlFileFull, output, Encoding.UTF8);
+                    RemoveOldCsvFile(csvFileFull);
                     MessageBox.Show("The HTML was created successfully!\nFile created: " + htmlFileFull, "HTML Conversion Successful!", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)
