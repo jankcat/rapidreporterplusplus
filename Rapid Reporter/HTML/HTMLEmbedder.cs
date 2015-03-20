@@ -42,7 +42,7 @@ namespace Rapid_Reporter.HTML
                     plainTextNote);
         }
 
-        private static string MakeImageSrcData(string filename)
+        internal static string MakeImageSrcData(string filename)
         {
             try
             {

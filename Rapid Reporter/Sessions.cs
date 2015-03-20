@@ -87,12 +87,12 @@ namespace Rapid_Reporter
         // Notes are always saved on file, not only when program exists (so no data loss in case of crash)
 
         // UpdateNotes: There are two overloads: One receives all strings (custom messages), the other an int (typed messages)
-        public void UpdateNotes(int type, string note, string screenshot, string rtfNote)
+        internal void UpdateNotes(int type, string note, string screenshot, string rtfNote)
         {
             UpdateNotes(NoteTypes[type], note, screenshot, rtfNote);
             Logger.Record("[UpdateNotes isss]: Note added to session log. Attachments: (" + (screenshot.Length > 0) + " | " + (rtfNote.Length > 0) + ")", "Session", "info");
         }
-        public void UpdateNotes(string type, string note, string screenshot = "", string rtfNote = "")
+        internal void UpdateNotes(string type, string note, string screenshot = "", string rtfNote = "")
         {
             SessionNote = DateTime.Now + "," + type + ",\"" + note + "\"," + rtfNote + "\n";
             SaveToSessionNotes(SessionNote);
@@ -191,13 +191,21 @@ namespace Rapid_Reporter
                             switch (thisLine[1])
                             {
                                 case @"Screenshot":
-                                    if (!File.Exists(WorkingDir + note)) break;
+                                    if (!File.Exists(WorkingDir + note))
+                                    {
+                                        note += " not found.";
+                                        break;
+                                    }
                                     note = HtmlEmbedder.BuildSessionRow_Img(imgCount, WorkingDir + note);
                                     htmlFileBufferPopups += HtmlEmbedder.BuildPopUp_Img(imgCount);
                                     imgCount++;
                                     break;
                                 case @"PlainText Note":
-                                    if (!File.Exists(WorkingDir + note)) break;
+                                    if (!File.Exists(WorkingDir + note))
+                                    {
+                                        note += " not found.";
+                                        break;
+                                    }
                                     htmlFileBufferPopups += HtmlEmbedder.BuildPopUp_PTNote(ptnCount, WorkingDir + note);
                                     note = HtmlEmbedder.BuildSessionRow_PTNote(ptnCount);
                                     ptnCount++;
