@@ -105,11 +105,14 @@ namespace Rapid_Reporter.Forms
             ExitApp();
         }
         // Before closing the window, we have to close the session and the RTF note
-        private void ExitApp()
+        private void ExitApp(bool dontFinishSession = false)
         {
-            // Session
-            Logger.Record("[ExitApp]: Closing Session...", "SMWidget", "info");
-            _currentSession.CloseSession();
+            if (!dontFinishSession)
+            {
+                // Session
+                Logger.Record("[ExitApp]: Closing Session...", "SMWidget", "info");
+                _currentSession.CloseSession();
+            }
             // PT Note
             Logger.Record("[ExitApp]: Closing PlainText Note (force = true)...", "SMWidget", "info");
             _ptn.ForceClose = true; // We keep the RTF open (hidden), so we have to force it out
@@ -645,8 +648,9 @@ namespace Rapid_Reporter.Forms
 
         private void PauseSession_Click(object sender, RoutedEventArgs e)
         {
+            Logger.Record("[PauseSession_Click]: Pausing Session...", "SMWidget", "info");
             _currentSession.UpdateNotes("Note", "[RR++]: Pausing Session...");
-            // exit without doing an HTML
+            ExitApp(true);
         }
     }
 }

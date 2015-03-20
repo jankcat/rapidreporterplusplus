@@ -131,7 +131,7 @@
     <Compile Include="Logger.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Sessions.cs" />
+    <Compile Include="Session.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
