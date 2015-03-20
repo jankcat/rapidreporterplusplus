@@ -3,13 +3,16 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+
 #pragma warning disable 612,618
 
 namespace Rapid_Reporter.Forms
@@ -25,7 +28,7 @@ namespace Rapid_Reporter.Forms
         public string PlainTextNoteName = "";			// Attached to a Session Note. Public because it is used *directly* by the RTFNote
 
         //rtf and pt note things
-        public bool IsPlainTextDiagOpen = false;
+        public bool IsPlainTextDiagOpen;
 
         // State Based Behaviors:
         // Session flow:
@@ -37,7 +40,7 @@ namespace Rapid_Reporter.Forms
         Session.SessionStartingStage _currentStage = Session.SessionStartingStage.Tester;
 
         // Timer to perform recurring actions (timing is set on windows load)
-        static System.Windows.Forms.Timer _recurrenceTimer = new System.Windows.Forms.Timer();
+        static Timer _recurrenceTimer = new Timer();
 
         HotKey _hotKey;
 
@@ -55,6 +58,7 @@ namespace Rapid_Reporter.Forms
         {
             Logger.Record("[SMWidget]: App constructor. Initializing.", "SMWidget", "info");
             InitializeComponent();
+            SetBgColor(GetBgColorFromReg());
             _ptn.InitializeComponent();
             _ptn.Sm = this;
             NoteContent.Focus();
@@ -101,11 +105,14 @@ namespace Rapid_Reporter.Forms
             ExitApp();
         }
         // Before closing the window, we have to close the session and the RTF note
-        private void ExitApp()
+        private void ExitApp(bool dontFinishSession = false)
         {
-            // Session
-            Logger.Record("[ExitApp]: Closing Session...", "SMWidget", "info");
-            _currentSession.CloseSession();
+            if (!dontFinishSession)
+            {
+                // Session
+                Logger.Record("[ExitApp]: Closing Session...", "SMWidget", "info");
+                _currentSession.CloseSession();
+            }
             // PT Note
             Logger.Record("[ExitApp]: Closing PlainText Note (force = true)...", "SMWidget", "info");
             _ptn.ForceClose = true; // We keep the RTF open (hidden), so we have to force it out
@@ -232,17 +239,19 @@ namespace Rapid_Reporter.Forms
         }
         
         // The function below will change the visuals of the application at the different stages (tester/charter/notes state based behavior)
-        private void StateMove(Session.SessionStartingStage newStage)
+        private void StateMove(Session.SessionStartingStage newStage, bool skipStartSession = false)
         {
             Logger.Record("[StateMove]: Session Stage now: " + _currentStage.ToString(), "SMWidget", "info");
             _currentStage = newStage;
             switch (_currentStage)
             {
                 case Session.SessionStartingStage.Tester:
-                    NoteType.Text = "Reporter:"; prevType.Text = ""; nextType.Text = "";
-                    _prevNoteType = 1; _nextNoteType = _currentSession.NoteTypes.Length - 1;
+                    NoteType.Text = "Reporter:";
+                    prevType.Text = ""; 
+                    nextType.Text = "";
+                    _prevNoteType = 1;
+                    _nextNoteType = _currentSession.NoteTypes.Length - 1;
                     NoteType.FontSize = 23;
-                    OpenFolder.Header = "Change working folder...";
                     Logger.Record("\t[StateMove]: Session Stage moving -> Tester", "SMWidget", "info");
                     break;
                 case Session.SessionStartingStage.Charter:
@@ -267,8 +276,13 @@ namespace Rapid_Reporter.Forms
                     prevType.Text = "? " + _currentSession.NoteTypes[_prevNoteType] + ":";
                     nextType.Text = "? " + _currentSession.NoteTypes[_nextNoteType] + ":";
                     NoteType.FontSize = 21;
-                    _currentSession.StartSession(); ProgressGo(90); t90.IsChecked = true;
-                    ScreenShot.IsEnabled = true; RTFNoteBtn.IsEnabled = true;
+                    if (!skipStartSession) _currentSession.StartSession(); 
+                    ProgressGo(90); 
+                    t90.IsChecked = true;
+                    ScreenShot.IsEnabled = true; 
+                    RTFNoteBtn.IsEnabled = true;
+                    ResumeSession.IsEnabled = false;
+                    PauseSession.IsEnabled = true;
                     // Change the icon of the image of the buttons, to NOT appear disabled.
                     CloseButton.ToolTip = "Save and Quit";
                     SaveAndQuitOption.Header = "Save and Quit";
@@ -276,7 +290,6 @@ namespace Rapid_Reporter.Forms
                     ScreenShotIcon.Source = new BitmapImage(new Uri("iconshot.png", UriKind.Relative));
                     RTFNoteBtnIcon.Source = new BitmapImage(new Uri("iconnotes.png", UriKind.Relative));
                     TimerMenu.IsEnabled = true;
-                    OpenFolder.Header = "Open working folder...";
                     Logger.Record("\t\t[StateMove]: Session Stage moving -> Notes", "SMWidget", "info");
                     break;
                 default:
@@ -292,41 +305,6 @@ namespace Rapid_Reporter.Forms
             Logger.Record("[AboutBox_Click]: About box invoked", "SMWidget", "info");
             var about = new AboutDlg {Owner = this};
             about.ShowDialog();
-        }
-
-        //OpenFolder
-        // Used to reach the working folder, where attachments and reports are.
-        private void WorkingFolder_Click(object sender, RoutedEventArgs e)
-        {
-            Logger.Record("[WorkingFolder_Click]: Opening working directory", "SMWidget", "info");
-            // If we didn't start the session, allow changing the folder.
-            // If session started, can only open
-            if (_currentStage == Session.SessionStartingStage.Notes)
-            {
-                Logger.Record("\t[WorkingFolder_Click]: Loading explorer to " + _currentSession.WorkingDir, "SMWidget", "info");
-                Process.Start(new ProcessStartInfo(_currentSession.WorkingDir));
-            }
-            else
-            {
-                Logger.Record("\t[WorkingFolder_Click]: Loading folder picker", "SMWidget", "info");
-                string currentDir = _currentSession.WorkingDir; // In case 'cancel' is pressed *after* the 'New Folder' win issue has quicked in,
-                                                                // we want to revert to the old directory
-                var folderPick = new System.Windows.Forms.FolderBrowserDialog();
-                do  // why the loop? Microsoft Folder Picker dialog has an issue that when making a new folder, if Ok is pressed before the new
-                {   //  name has taken place, the dialog would return to our app the default 'New Folder' and the change would take place only after
-                    //  that, causing a 'folder not found' exception. So we loop until a) an existing folder was found or b) user press cancel.
-                    if (folderPick.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                    {
-                        Logger.Record("\t\t[WorkingFolder_Click]: Folder picked, will set working folder", "SMWidget", "info");
-                        SetWorkingDir(folderPick.SelectedPath);
-                    }
-                    else
-                    {
-                        SetWorkingDir(currentDir);
-                    }
-                } while (!Directory.Exists(_currentSession.WorkingDir));
-            }
-            e.Handled = true;
         }
 
         // GetHistory:
@@ -437,8 +415,8 @@ namespace Rapid_Reporter.Forms
         private void ScreenShot_Click(object sender, RoutedEventArgs e)
         {
             Logger.Record("[ScreenShot_Click]: Capturing screen", "SMWidget", "info");
-            var edit = System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Shift;
-            var direct = System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Control;
+            var edit = Control.ModifierKeys == Keys.Shift;
+            var direct = Control.ModifierKeys == Keys.Control;
             if (edit || !direct) WindowState = WindowState.Minimized;
             Image imgOut;
             var ss = new ScreenShot();
@@ -514,8 +492,8 @@ namespace Rapid_Reporter.Forms
             // If the user keeps the key pressed, HotKey requests will queue up and lag
             //  With this condition we break the chain, as the requests that come after stopping
             //  to press are ifnored.
-            Logger.Record("[OnHotKeyHandler]: HotKey Modifiers: " + System.Windows.Forms.Control.ModifierKeys, "SMWidget", "info");
-            if (System.Windows.Forms.Control.ModifierKeys != (System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt))
+            Logger.Record("[OnHotKeyHandler]: HotKey Modifiers: " + Control.ModifierKeys, "SMWidget", "info");
+            if (Control.ModifierKeys != (Keys.Control | Keys.Alt))
             {
                 return;
             }
@@ -584,12 +562,34 @@ namespace Rapid_Reporter.Forms
             Logger.Record("[SetWorkingDir] Setting directory to " + newPath, "SMWidget", "info");
             if (!newPath.EndsWith(@"\")) newPath += @"\"; // Add the trailing 'slash' to the directory
             _ptn.WorkingDir = _currentSession.WorkingDir = newPath; // the workingDir needs to be the same for all files!
-            FolderName.Header = (50 < _currentSession.WorkingDir.Length) ? "..." + _currentSession.WorkingDir.Substring(_currentSession.WorkingDir.Length - 47) : _currentSession.WorkingDir;
+            //FolderName.Header = (50 < _currentSession.WorkingDir.Length) ? "..." + _currentSession.WorkingDir.Substring(_currentSession.WorkingDir.Length - 47) : _currentSession.WorkingDir;
         }
 
         private void SaveAndQuitOption_Click(object sender, RoutedEventArgs e)
         {
             CloseButton_Click(sender, e);
+        }
+
+        private void ResetSession()
+        {
+            //reset
+            _currentNoteType = 0;		// The actual types are controlled by the Session class.
+            _prevNoteType = 0;
+            _nextNoteType = 0; // Used for the hints about the next note up or down.
+            _currentScreenshot = 1;		// The number of the screenshot (increases by 1). Helps putting them in order, and finding them between multiple the files.
+            _screenshotName = "";		// Attached to a Session Note.
+            PlainTextNoteName = "";			// Attached to a Session Note. Public because it is used *directly* by the RTFNote
+            IsPlainTextDiagOpen = false;
+            ResumeSession.IsEnabled = true;
+            PauseSession.IsEnabled = false;
+            _currentStage = Session.SessionStartingStage.Tester;
+            _recurrenceTimer = new Timer();
+            _currentSession = new Session();    // The session managing class
+            SMWidgetForm.Title = System.Windows.Forms.Application.ProductName;
+            SetWorkingDir(_currentSession.WorkingDir);
+            _recurrenceTimer.Tick += TimerEventProcessor; // this is the function called everytime the timer expires
+            _recurrenceTimer.Interval = 90 * 1000; // 30 times 1 second (1000 milliseconds)
+            _recurrenceTimer.Start();
         }
 
         private void SaveAndNewOption_Click(object sender, RoutedEventArgs e)
@@ -604,31 +604,53 @@ namespace Rapid_Reporter.Forms
             _ptn.Close();
 
             Logger.Record("[SaveAndNewOption_Click]: Resetting session variables", "SMWidget", "info");
-            //reset
-            _currentNoteType = 0;		// The actual types are controlled by the Session class.
-            _prevNoteType = 0; 
-            _nextNoteType = 0; // Used for the hints about the next note up or down.
-            _currentScreenshot = 1;		// The number of the screenshot (increases by 1). Helps putting them in order, and finding them between multiple the files.
-            _screenshotName = "";		// Attached to a Session Note.
-            PlainTextNoteName = "";			// Attached to a Session Note. Public because it is used *directly* by the RTFNote
-            IsPlainTextDiagOpen = false;
-            _currentStage = Session.SessionStartingStage.Tester;
-            _recurrenceTimer = new System.Windows.Forms.Timer();
-            _currentSession  = new Session();    // The session managing class
-            //_ptn = new PlainTextNote();                // The enhanced note window
-
+            ResetSession();
             Logger.Record("[SaveAndNewOption_Click]: Restarting session", "SMWidget", "info");
-
-            SMWidgetForm.Title = System.Windows.Forms.Application.ProductName;
-            SetWorkingDir(_currentSession.WorkingDir);
             StateMove(Session.SessionStartingStage.Tester);
-
-            // Some of the actions in the tool are recurrent. We do them every 30 seconds.
-            _recurrenceTimer.Tick += TimerEventProcessor; // this is the function called everytime the timer expires
-            _recurrenceTimer.Interval = 90 * 1000; // 30 times 1 second (1000 milliseconds)
-            _recurrenceTimer.Start();
-
             NoteContent.Focus();
+        }
+
+        private void ColorPicker_OnClick(object sender, RoutedEventArgs e)
+        {
+            var colorDialog = new ColorDialog();
+            if (colorDialog.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
+            var r = colorDialog.Color.R;
+            var g = colorDialog.Color.G;
+            var b = colorDialog.Color.B;
+            SetBgColor(System.Windows.Media.Color.FromArgb(colorDialog.Color.A, r, g, b));
+        }
+
+        private void SetBgColor(System.Windows.Media.Color color)
+        {
+            RegUtil.CreateRegKey("BgColor", color.ToString());
+            MainGrid.Background = new SolidColorBrush(color);
+        }
+
+        private static System.Windows.Media.Color GetBgColorFromReg()
+        {
+            var str = RegUtil.ReadRegKey("BgColor");
+            if (string.IsNullOrWhiteSpace(str))
+                return System.Windows.Media.Color.FromArgb(byte.MaxValue, (byte)0, (byte)104, byte.MaxValue);
+            var obj = System.Windows.Media.ColorConverter.ConvertFromString(str);
+            if (obj != null)
+                return (System.Windows.Media.Color)obj;
+            return System.Windows.Media.Color.FromArgb(byte.MaxValue, (byte)0, (byte)104, byte.MaxValue);
+        }
+
+        private void ResumeSession_Click(object sender, RoutedEventArgs e)
+        {
+            ResetSession();
+            if (!_currentSession.ResumeSession()) return;
+            StateMove(Session.SessionStartingStage.Notes, true);
+            _currentSession.UpdateNotes("Note", "[RR++]: Resuming Session...");
+            NoteContent.Focus();
+        }
+
+        private void PauseSession_Click(object sender, RoutedEventArgs e)
+        {
+            Logger.Record("[PauseSession_Click]: Pausing Session...", "SMWidget", "info");
+            _currentSession.UpdateNotes("Note", "[RR++]: Pausing Session...");
+            ExitApp(true);
         }
     }
 }

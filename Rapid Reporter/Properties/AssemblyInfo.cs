@@ -50,7 +50,7 @@ using System.Resources;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.2.1.1")]
-[assembly: AssemblyFileVersion("2.2.1.1")]
+[assembly: AssemblyVersion("2.4.0.0")]
+[assembly: AssemblyFileVersion("2.4.0.0")]
 [assembly: GuidAttribute("7AEB6D97-FCA8-4197-8DBD-0017E3B00468")]
 [assembly: NeutralResourcesLanguageAttribute("en-US")]

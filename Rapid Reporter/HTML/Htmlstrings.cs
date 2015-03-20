@@ -2,125 +2,26 @@ namespace Rapid_Reporter.HTML
 {
 	public static class Htmlstrings
 	{
-		// Dynamic
-		public static string HtmlTitle = ": Session Report";
+        public static string HtmlTitle = ": Session Report";
+        public static string AHtmlHead;
+        public static string BTitleOut;
+        public static string CStyle;
+        public static string DJavascript;
+        public static string EBody;
+        public static string GTable;
+        public static string JTableEnd;
+        public static string MHtmlEnd;
 
-		// Static values
-		//  the letter at the beginning of the var name is to hint about their order
-		public static string AHtmlHeader = "";
-		public static string CJavascript = "";
-		public static string DStyle = "";
-		public static string GHtmlBody1 = "";
-        public static string ToggleAuto = "";
-		public static string JHtmlBodytable1 = "";
-		public static string MHtmlBodytable2 = "";
-		public static string PHtmlFooter = "";
-		static Htmlstrings()
-		{
-
-			//****************************************/
-			AHtmlHeader = @"<html>
-    <head>
-        <meta http-equiv=""Content-Type"" content=""text/html; charset=utf-8"">
-        <title>";
-            //****************************************/
-            CJavascript = HtmlTitle + @"        </title>";
-
-			//****************************************/
-			DStyle = @"
-        <style>
-            html *
-            {
-                font-family: Verdana !important;
-                font-size: 11px;
-            }
-            .aroundtable {font-family: Verdana; font-size: 11px; }
-            H1 {text-align: center; font-family: Verdana;}
-            H5 {text-align: center; font-family: Verdana; font-weight: normal;} 
-            table {margin-left: auto; margin-right: auto; min-width:700px; width:80%; border-collapse: collapse; border: 1px solid black;}
-            table tr img {max-width: 350px; max-height: 250px; resize-scale: showall;}
-            table tr td {padding: 2px;}
-
-            table tr.Session {font-weight: bold; background: #FAFAFA;}
-            table tr.Scenario {font-weight: bold; background: #FAFAFA;}
-            table tr.Environment {font-weight: bold; background: #FAFAFA;}
-            table tr.Versions {font-weight: bold; background: #FAFAFA;}
-
-            table tr.Bug\/Issue {background: #FF4D4D;}
-            table tr.Follow {background: #5CADFF;}
-            table tr.Note {background: #FAFAFA;}
-            table tr.Test {background: #FAFAFA;}
-            table tr.Success {background: #80FF80;}
-            table tr.Prerequisite {background: #FAFAFA;}
-            table tr.Summary {background: #FAFAFA;}
-
-            table tr.Screenshot {background: #FAFAFA;}
-            table tr.PlainText {background: #FAFAFA;}
-
-            table td.notetype {font-weight: bold; width:190px;}
-            table td.timestamp {font-weight: bold; width:175px;}
-        </style>";
-
-			//****************************************/
-			GHtmlBody1 = @"
-        <script>
-            function ShowImgEle(eleId, img64)
-            {
-	            var ele = document.getElementById(eleId);
-                var eletable = document.getElementById('aroundtable');
-	            eletable.style.display = ""none"";
-	            ele.style.display = ""inline"";
-	            ele.style.background = ""url('""+img64+""') no-repeat"";
-	            ele.style.backgroundPosition = ""0px 15px"";
-	            ele.style.textDecoration = ""underline"";
-            }
-            function HideImgEle(eleId)
-            {
-	            var ele = document.getElementById(eleId);
-                var eletable = document.getElementById('aroundtable');
-	            eletable.style.display = ""inline"";
-	            ele.style.display = ""none"";
-            }
-            function ShowPlaintextNote(eleId)
-            {
-	            var ele = document.getElementById(eleId);
-                var eletable = document.getElementById('aroundtable');
-	            eletable.style.display = ""none"";
-	            ele.style.display = ""inline"";
-            }
-            function HidePlaintextNote(eleId)
-            {
-	            var ele = document.getElementById(eleId);
-                var eletable = document.getElementById('aroundtable');
-	            eletable.style.display = ""inline"";
-	            ele.style.display = ""none"";
-            }
-        </script>
-    </head>
-    <body>
-        <div id=""allbody"">";
-
-            //****************************************/
-            ToggleAuto = @"";
-
-			//****************************************/
-			JHtmlBodytable1 = @"
-            <div id=""aroundtable"">
-                <table border=""1"">
-";
-
-			//****************************************/
-			MHtmlBodytable2 = @"
-                </table>
-            </div>
-";
-
-			//****************************************/
-			PHtmlFooter = @"
-        </div>
-    </body>
-</html>
-";
-		}
+        static Htmlstrings()
+        {
+            AHtmlHead = "<html>\r\n    <head>\r\n        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\r\n        <title>";
+            BTitleOut = "        </title>";
+            CStyle = "\r\n        <style>\r\n            html *\r\n            {\r\n                font-family: Verdana !important;\r\n                font-size: 11px;\r\n            }\r\n            .aroundtable {font-family: Verdana; font-size: 11px; }\r\n            H1 {text-align: center; font-family: Verdana;}\r\n            H5 {text-align: center; font-family: Verdana; font-weight: normal;} \r\n            table {margin-left: auto; margin-right: auto; min-width:700px; width:80%; border-collapse: collapse; border: 1px solid black;}\r\n            table tr img {max-width: 350px; max-height: 250px; resize-scale: showall;}\r\n            table tr td {padding: 2px;}\r\n\r\n            table tr.Session {font-weight: bold; background: #FAFAFA;}\r\n            table tr.Scenario {font-weight: bold; background: #FAFAFA;}\r\n            table tr.Environment {font-weight: bold; background: #FAFAFA;}\r\n            table tr.Versions {font-weight: bold; background: #FAFAFA;}\r\n\r\n            table tr.Bug\\/Issue {background: #FF4D4D;}\r\n            table tr.Follow {background: #5CADFF;}\r\n            table tr.Note {background: #FAFAFA;}\r\n            table tr.Test {background: #FAFAFA;}\r\n            table tr.Success {background: #80FF80;}\r\n            table tr.Prerequisite {background: #FAFAFA;}\r\n            table tr.Summary {background: #FAFAFA;}\r\n\r\n            table tr.Screenshot {background: #FAFAFA;}\r\n            table tr.PlainText {background: #FAFAFA;}\r\n\r\n            table td.notetype {font-weight: bold; width:190px;}\r\n            table td.timestamp {font-weight: bold; width:175px;}\r\n        </style>";
+            DJavascript = "\r\n        <script>\r\n            function ShowImgEle(eleId, bigImgId, littleImgId)\r\n            {\r\n                var sessionTable = document.getElementById('aroundtable');\r\n\t            sessionTable.style.display = \"none\";\r\n\t            var bigImgDiv = document.getElementById(eleId);\r\n\t            bigImgDiv.style.display = \"inline\";\r\n\t            //bigImgDiv.style.background = \"url('\"+img64+\"') no-repeat\";\r\n\t            //bigImgDiv.style.backgroundPosition = \"0px 15px\";\r\n\t            bigImgDiv.style.textDecoration = \"underline\";\r\n                var bigImg = document.getElementById(bigImgId);\r\n                var littleImg = document.getElementById(littleImgId);\r\n                bigImg.src = littleImg.src;\r\n            }\r\n            function HideImgEle(eleId)\r\n            {\r\n\t            var bigImgDiv = document.getElementById(eleId);\r\n                var sessionTable = document.getElementById('aroundtable');\r\n\t            sessionTable.style.display = \"inline\";\r\n\t            bigImgDiv.style.display = \"none\";\r\n            }\r\n            function ShowPlaintextNote(eleId)\r\n            {\r\n\t            var ele = document.getElementById(eleId);\r\n                var eletable = document.getElementById('aroundtable');\r\n\t            eletable.style.display = \"none\";\r\n\t            ele.style.display = \"inline\";\r\n            }\r\n            function HidePlaintextNote(eleId)\r\n            {\r\n\t            var ele = document.getElementById(eleId);\r\n                var eletable = document.getElementById('aroundtable');\r\n\t            eletable.style.display = \"inline\";\r\n\t            ele.style.display = \"none\";\r\n            }\r\n        </script>\r\n    </head>";
+            EBody = "<body>\r\n        <div id=\"allbody\">\r\n            <h1>";
+            GTable = "\r\n            </h1>\r\n            <!--[if IE]><h5>For best results, use Chrome or Firefox.</h5><![endif]-->\r\n            <div id=\"aroundtable\">\r\n                <table border=\"1\">\r\n";
+            JTableEnd = "\r\n                </table>\r\n            </div>\r\n";
+            MHtmlEnd = "\r\n        </div>\r\n    </body>\r\n</html>\r\n";
+        }
 	}
 }
