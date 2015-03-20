@@ -40,8 +40,8 @@
     <ProductName>Session Master</ProductName>
     <PublisherName>Shmuel Gershon</PublisherName>
     <SuiteName>Session Master</SuiteName>
-    <ApplicationRevision>2</ApplicationRevision>
-    <ApplicationVersion>2.0.4.%2a</ApplicationVersion>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>2.3.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>false</BootstrapperEnabled>
