@@ -15,7 +15,9 @@
                 <MenuItem.Icon><Image Source="icontimer.png" /></MenuItem.Icon>
             </MenuItem>
             <MenuItem Name="SetShotHotKey" Header="Ctrl+Alt+F9 for ScreenShots" IsCheckable="True" IsChecked="True" Checked="SetShotHotKey_Checked" Unchecked="SetShotHotKey_Unchecked"><MenuItem.Icon><Image Source="iconshot.png" /></MenuItem.Icon></MenuItem>
-            <MenuItem Name="ColorPicker" Header="Pick Color" Click="ColorPicker_OnClick"><MenuItem.Icon><Image Source="iconshot.png" /></MenuItem.Icon></MenuItem>
+            <MenuItem Name="ColorPicker" Header="Pick Color" Click="ColorPicker_OnClick">
+                <MenuItem.Icon>
+                    <Image Source="paintbrush.png" Width="20" Height="20"/></MenuItem.Icon></MenuItem>
             <MenuItem Name="AboutBox" Header="About..." Click="AboutBox_Click"><MenuItem.Icon><Image Source="RapidReporter.ico" Width="16" /></MenuItem.Icon></MenuItem>
         </ContextMenu>
     </Window.ContextMenu>
@@ -77,12 +79,12 @@
                     </MenuItem>
                     <MenuItem Name="PauseSession" Header="Pause Session" Click="PauseSession_Click" IsEnabled="False">
                         <MenuItem.Icon>
-                            <Image Source="32raw.png" Width="20" Height="20"/>
+                            <Image Source="pause.png" Width="20" Height="20"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Name="ResumeSession" Header="Resume a Session" Click="ResumeSession_Click" IsEnabled="True">
                         <MenuItem.Icon>
-                            <Image Source="32raw.png" Width="20" Height="20"/>
+                            <Image Source="play.png" Width="20" Height="20"/>
                         </MenuItem.Icon>
                     </MenuItem>
                 </ContextMenu>

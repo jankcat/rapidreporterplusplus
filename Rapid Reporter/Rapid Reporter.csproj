@@ -219,22 +219,22 @@
   <ItemGroup>
     <PublishFile Include="RapidReporter++.exe.config">
       <Visible>False</Visible>
+      <PublishState>Auto</PublishState>
+      <IncludeHash>False</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Auto</PublishState>
-      <IncludeHash>False</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="RapidReporter++.exe.manifest">
       <Visible>False</Visible>
+      <PublishState>Auto</PublishState>
+      <IncludeHash>False</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Auto</PublishState>
-      <IncludeHash>False</IncludeHash>
       <FileType>ManifestEntryPoint</FileType>
     </PublishFile>
   </ItemGroup>
@@ -249,6 +249,15 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Forms\32raw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Forms\paintbrush.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Forms\pause.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Forms\play.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
