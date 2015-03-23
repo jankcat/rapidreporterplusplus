@@ -429,6 +429,12 @@ namespace Rapid_Reporter.Forms
             {
                 imgOut = ss.CaptureScreenShot();
             }
+            if (ss.Canceled)
+            {
+                if (edit || !direct) WindowState = WindowState.Normal;
+                Logger.Record("[ScreenShot_Click]: Cancelled screenshot", "SMWidget", "info");
+                return;
+            }
             AddScreenshot2Note(imgOut);                                 
             Logger.Record("[ScreenShot_Click]: Captured " + _screenshotName + ", edit: " + edit, "SMWidget", "info");
             if (edit)                                                                   
@@ -631,11 +637,11 @@ namespace Rapid_Reporter.Forms
         {
             var str = RegUtil.ReadRegKey("BgColor");
             if (string.IsNullOrWhiteSpace(str))
-                return System.Windows.Media.Color.FromArgb(byte.MaxValue, (byte)0, (byte)104, byte.MaxValue);
+                return System.Windows.Media.Color.FromArgb(byte.MaxValue, 0, 104, byte.MaxValue);
             var obj = System.Windows.Media.ColorConverter.ConvertFromString(str);
             if (obj != null)
                 return (System.Windows.Media.Color)obj;
-            return System.Windows.Media.Color.FromArgb(byte.MaxValue, (byte)0, (byte)104, byte.MaxValue);
+            return System.Windows.Media.Color.FromArgb(byte.MaxValue, 0, 104, byte.MaxValue);
         }
 
         private void SetTransparency(Double transparency)

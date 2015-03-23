@@ -21,6 +21,8 @@ namespace Rapid_Reporter.Forms
         public Pen SelectPen;
         bool _start;
 
+        public bool Cancelled;
+
         public SnippetForm()
         {
             InitializeComponent();
@@ -45,7 +47,6 @@ namespace Rapid_Reporter.Forms
                 pictureBox1.Image = Image.FromStream(s);
             }
             Cursor = Cursors.Cross;
-            TopMost = true;
             BringToFront();
             Focus();
         }
@@ -100,6 +101,25 @@ namespace Rapid_Reporter.Forms
             g.CompositingQuality = CompositingQuality.HighQuality;
             g.DrawImage(originalImage, 0, 0, rect, GraphicsUnit.Pixel);
             Snippet = img;
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData != Keys.Escape)
+                return base.ProcessCmdKey(ref msg, keyData);
+            Cancel();
+            return true;
+        }
+
+        internal void Cancel()
+        {
+            Cancelled = true;
+            CloseForm();
+        }
+
+        private void SnippetForm_Shown(object sender, EventArgs e)
+        {
+            Activate();
         }
     }
 }
