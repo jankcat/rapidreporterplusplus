@@ -26,7 +26,6 @@ namespace Rapid_Reporter.Forms
         public SnippetForm()
         {
             InitializeComponent();
-            Focus();
         }
 
         private void CloseForm()

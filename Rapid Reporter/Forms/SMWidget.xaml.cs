@@ -420,7 +420,6 @@ namespace Rapid_Reporter.Forms
             var direct = Control.ModifierKeys == Keys.Control;
             if (edit || !direct) WindowState = WindowState.Minimized;
             Image imgOut;
-            //var ss = new ScreenShot();
             var ss = new ScreenShot();
             if (!direct && !edit)
             {
