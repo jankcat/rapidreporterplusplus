@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
@@ -11,7 +12,11 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
+using Application = System.Windows.Forms.Application;
+using Color = System.Windows.Media.Color;
+using ColorConverter = System.Windows.Media.ColorConverter;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using MenuItem = System.Windows.Controls.MenuItem;
 
 #pragma warning disable 612,618
 
@@ -56,6 +61,7 @@ namespace Rapid_Reporter.Forms
         // Default constructor, everything is empty/default values
         public SmWidget()
         {
+            RegUtil.InitReg();
             var trans = GetTransparencyFromReg();
             Logger.Record("[SMWidget]: App constructor. Initializing.", "SMWidget", "info");
             InitializeComponent();
@@ -63,6 +69,8 @@ namespace Rapid_Reporter.Forms
             TransparencySlide.Value = trans;
             _ptn.InitializeComponent();
             _ptn.Sm = this;
+            var updater = new Updater();
+            Task.Run((Action)updater.CheckVersion);
             NoteContent.Focus();
             Logger.Record("[SMWidget]: App constructor initialized and CLI executed.", "SMWidget", "info");
         }
@@ -72,7 +80,7 @@ namespace Rapid_Reporter.Forms
         {
             Logger.Record("[SMWidgetForm_Loaded]: Form loading to windows", "SMWidget", "info");
 
-            SMWidgetForm.Title = System.Windows.Forms.Application.ProductName;
+            SMWidgetForm.Title = Application.ProductName;
             SetWorkingDir(_currentSession.WorkingDir);
             StateMove(Session.SessionStartingStage.Tester);
 
@@ -220,7 +228,7 @@ namespace Rapid_Reporter.Forms
                                     //  - 3) We clear notes and attachments to make place for new ones
                                     /*1*/
                                     _currentSession.UpdateNotes(_currentNoteType, NoteContent.Text.Replace("\"", "''").Replace(",", ";").Trim(), _screenshotName, PlainTextNoteName);
-                                    /*2*/   var item = new System.Windows.Controls.MenuItem {Header = NoteContent.Text};
+                                    /*2*/   var item = new MenuItem {Header = NoteContent.Text};
                                     item.Click += delegate { GetHistory(item.Header.ToString()); };
                                     NoteHistory.Items.Add(item);
                                     NoteHistory.Visibility = Visibility.Visible;
@@ -592,7 +600,7 @@ namespace Rapid_Reporter.Forms
             _currentStage = Session.SessionStartingStage.Tester;
             _recurrenceTimer = new Timer();
             _currentSession = new Session();    // The session managing class
-            SMWidgetForm.Title = System.Windows.Forms.Application.ProductName;
+            SMWidgetForm.Title = Application.ProductName;
             SetWorkingDir(_currentSession.WorkingDir);
             _recurrenceTimer.Tick += TimerEventProcessor; // this is the function called everytime the timer expires
             _recurrenceTimer.Interval = 90 * 1000; // 30 times 1 second (1000 milliseconds)
@@ -624,24 +632,24 @@ namespace Rapid_Reporter.Forms
             var r = colorDialog.Color.R;
             var g = colorDialog.Color.G;
             var b = colorDialog.Color.B;
-            SetBgColor(System.Windows.Media.Color.FromArgb(colorDialog.Color.A, r, g, b));
+            SetBgColor(Color.FromArgb(colorDialog.Color.A, r, g, b));
         }
 
-        private void SetBgColor(System.Windows.Media.Color color)
+        private void SetBgColor(Color color)
         {
             RegUtil.CreateRegKey("BgColor", color.ToString());
             MainGrid.Background = new SolidColorBrush(color);
         }
 
-        private static System.Windows.Media.Color GetBgColorFromReg()
+        private static Color GetBgColorFromReg()
         {
             var str = RegUtil.ReadRegKey("BgColor");
             if (string.IsNullOrWhiteSpace(str))
-                return System.Windows.Media.Color.FromArgb(byte.MaxValue, 0, 104, byte.MaxValue);
-            var obj = System.Windows.Media.ColorConverter.ConvertFromString(str);
+                return Color.FromArgb(byte.MaxValue, 0, 104, byte.MaxValue);
+            var obj = ColorConverter.ConvertFromString(str);
             if (obj != null)
-                return (System.Windows.Media.Color)obj;
-            return System.Windows.Media.Color.FromArgb(byte.MaxValue, 0, 104, byte.MaxValue);
+                return (Color)obj;
+            return Color.FromArgb(byte.MaxValue, 0, 104, byte.MaxValue);
         }
 
         private void SetTransparency(Double transparency)
@@ -675,5 +683,7 @@ namespace Rapid_Reporter.Forms
             _currentSession.UpdateNotes("Note", "Pausing Session...");
             ExitApp(true);
         }
+
+        
     }
 }
