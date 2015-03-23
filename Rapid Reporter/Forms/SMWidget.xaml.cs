@@ -56,9 +56,11 @@ namespace Rapid_Reporter.Forms
         // Default constructor, everything is empty/default values
         public SmWidget()
         {
+            var trans = GetTransparencyFromReg();
             Logger.Record("[SMWidget]: App constructor. Initializing.", "SMWidget", "info");
             InitializeComponent();
             SetBgColor(GetBgColorFromReg());
+            TransparencySlide.Value = trans;
             _ptn.InitializeComponent();
             _ptn.Sm = this;
             NoteContent.Focus();
@@ -130,8 +132,7 @@ namespace Rapid_Reporter.Forms
         private void TransparencySlide_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             Logger.Record("[TransparencySlide_ValueChanged]: Changing transparency to " + e.NewValue, "SMWidget", "config");
-            SMWidgetForm.Opacity = e.NewValue;
-            _ptn.Opacity = Math.Min(e.NewValue+0.2,1);
+            SetTransparency(e.NewValue);
         }
 
         // Application can be moved around the screen, to keep it out of the way
@@ -637,19 +638,35 @@ namespace Rapid_Reporter.Forms
             return System.Windows.Media.Color.FromArgb(byte.MaxValue, (byte)0, (byte)104, byte.MaxValue);
         }
 
+        private void SetTransparency(Double transparency)
+        {
+            RegUtil.CreateRegKey("Transparency", transparency.ToString(CultureInfo.InvariantCulture));
+            SMWidgetForm.Opacity = transparency;
+            _ptn.Opacity = Math.Min(transparency + 0.2, 1);
+        }
+
+        private static double GetTransparencyFromReg()
+        {
+            var str = RegUtil.ReadRegKey("Transparency");
+            if (string.IsNullOrWhiteSpace(str))
+                return 1.0;
+            double trans;
+            return Double.TryParse(str, out trans) ? trans : 1.0;
+        }
+
         private void ResumeSession_Click(object sender, RoutedEventArgs e)
         {
             ResetSession();
             if (!_currentSession.ResumeSession()) return;
             StateMove(Session.SessionStartingStage.Notes, true);
-            _currentSession.UpdateNotes("Note", "[RR++]: Resuming Session...");
+            _currentSession.UpdateNotes("Note", "Resuming Session...");
             NoteContent.Focus();
         }
 
         private void PauseSession_Click(object sender, RoutedEventArgs e)
         {
             Logger.Record("[PauseSession_Click]: Pausing Session...", "SMWidget", "info");
-            _currentSession.UpdateNotes("Note", "[RR++]: Pausing Session...");
+            _currentSession.UpdateNotes("Note", "Pausing Session...");
             ExitApp(true);
         }
     }
