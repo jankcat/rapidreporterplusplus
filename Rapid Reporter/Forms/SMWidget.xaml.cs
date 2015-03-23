@@ -303,7 +303,7 @@ namespace Rapid_Reporter.Forms
         private void AboutBox_Click(object sender, RoutedEventArgs e)
         {
             Logger.Record("[AboutBox_Click]: About box invoked", "SMWidget", "info");
-            var about = new AboutDlg {Owner = this};
+            var about = new AboutForm();
             about.ShowDialog();
         }
 
