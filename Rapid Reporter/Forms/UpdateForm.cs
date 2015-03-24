@@ -5,7 +5,7 @@ namespace Rapid_Reporter.Forms
 {
     public partial class UpdateForm : Form
     {
-        internal Version ServerVersion;
+        private Version _serverVersion;
         internal UpdateChosen Choice = UpdateChosen.Later;
 
         public UpdateForm()
@@ -15,8 +15,14 @@ namespace Rapid_Reporter.Forms
 
         private void UpdateForm_Load(object sender, EventArgs e)
         {
-            serverver.Text = (ServerVersion == null) ? "Cannot retrieve version" : ServerVersion.ToString();
+            serverver.Text = (_serverVersion == null) ? "Cannot retrieve version" : _serverVersion.ToString();
             myver.Text = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        }
+
+        internal void UpdateServerVersion(Version version)
+        {
+            _serverVersion = version;
+            serverver.Text = (_serverVersion == null) ? "Cannot retrieve version" : _serverVersion.ToString();
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)

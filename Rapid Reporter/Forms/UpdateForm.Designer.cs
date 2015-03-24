@@ -50,7 +50,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 22);
+            this.label2.Location = new System.Drawing.Point(12, 25);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(137, 13);
             this.label2.TabIndex = 1;
@@ -68,7 +68,7 @@
             // serverver
             // 
             this.serverver.AutoSize = true;
-            this.serverver.Location = new System.Drawing.Point(155, 22);
+            this.serverver.Location = new System.Drawing.Point(155, 25);
             this.serverver.Name = "serverver";
             this.serverver.Size = new System.Drawing.Size(16, 13);
             this.serverver.TabIndex = 3;
@@ -76,7 +76,7 @@
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(12, 35);
+            this.label5.Location = new System.Drawing.Point(12, 41);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(313, 29);
             this.label5.TabIndex = 4;
@@ -85,7 +85,7 @@
             // 
             // btnUpdate
             // 
-            this.btnUpdate.Location = new System.Drawing.Point(84, 67);
+            this.btnUpdate.Location = new System.Drawing.Point(84, 76);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(159, 23);
             this.btnUpdate.TabIndex = 5;
@@ -95,7 +95,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(84, 96);
+            this.btnCancel.Location = new System.Drawing.Point(84, 105);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(159, 23);
             this.btnCancel.TabIndex = 6;
@@ -105,7 +105,7 @@
             // 
             // btnIgnore
             // 
-            this.btnIgnore.Location = new System.Drawing.Point(84, 125);
+            this.btnIgnore.Location = new System.Drawing.Point(84, 134);
             this.btnIgnore.Name = "btnIgnore";
             this.btnIgnore.Size = new System.Drawing.Size(159, 23);
             this.btnIgnore.TabIndex = 7;
@@ -117,7 +117,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(319, 155);
+            this.ClientSize = new System.Drawing.Size(335, 171);
             this.ControlBox = false;
             this.Controls.Add(this.btnIgnore);
             this.Controls.Add(this.btnCancel);

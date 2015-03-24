@@ -69,8 +69,7 @@ namespace Rapid_Reporter.Forms
             TransparencySlide.Value = trans;
             _ptn.InitializeComponent();
             _ptn.Sm = this;
-            var updater = new Updater();
-            Task.Run((Action)updater.CheckVersion);
+            Task.Run((Action)Updater.CheckVersion);
             NoteContent.Focus();
             Logger.Record("[SMWidget]: App constructor initialized and CLI executed.", "SMWidget", "info");
         }
@@ -682,6 +681,11 @@ namespace Rapid_Reporter.Forms
             Logger.Record("[PauseSession_Click]: Pausing Session...", "SMWidget", "info");
             _currentSession.UpdateNotes("Note", "Pausing Session...");
             ExitApp(true);
+        }
+
+        private void UpdateButton_Click(object sender, RoutedEventArgs e)
+        {
+            Updater.ManualCheckVersion();
         }
 
         

@@ -275,6 +275,12 @@
   <ItemGroup>
     <Resource Include="Forms\play.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Forms\update.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Forms\help.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
