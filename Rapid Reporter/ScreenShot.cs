@@ -33,6 +33,8 @@ namespace Rapid_Reporter
         [DllImport("user32.dll")]
         public static extern IntPtr GetWindowDC(IntPtr ptr);
 
+        public bool Canceled;
+
         public Bitmap CaptureSnippet()
         {
             int minX = 0, minY = 0, maxX = 0, maxY = 0;
@@ -56,7 +58,7 @@ namespace Rapid_Reporter
                     ScreenStartImage = CaptureScreenShot()
                 };
             snipForm.ShowDialog();
-
+            if (snipForm.Cancelled || snipForm.Snippet == null) Canceled = true;
             return snipForm.Snippet ?? new Bitmap(1, 1);
         }
 
@@ -114,5 +116,7 @@ namespace Rapid_Reporter
             Logger.Record("[CaptureScreenshot]: BMP object ready, returning it to calling function", "ScreenShot", "info");
             return (bmp);
         }
+
+        
     }
 }
