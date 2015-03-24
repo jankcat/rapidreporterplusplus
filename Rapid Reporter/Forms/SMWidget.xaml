@@ -18,7 +18,16 @@
             <MenuItem Name="ColorPicker" Header="Pick Color" Click="ColorPicker_OnClick">
                 <MenuItem.Icon>
                     <Image Source="paintbrush.png" Width="20" Height="20"/></MenuItem.Icon></MenuItem>
-            <MenuItem Name="AboutBox" Header="About..." Click="AboutBox_Click"><MenuItem.Icon><Image Source="RapidReporter.ico" Width="16" /></MenuItem.Icon></MenuItem>
+            <MenuItem Name="UpdateButton" Header="Check For Updates..." Click="UpdateButton_Click">
+                <MenuItem.Icon>
+                    <Image Source="update.png" Width="20" Height="20" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Name="AboutBox" Header="About..." Click="AboutBox_Click">
+                <MenuItem.Icon>
+                    <Image Source="help.png" Width="20" Height="20" />
+                </MenuItem.Icon>
+            </MenuItem>
         </ContextMenu>
     </Window.ContextMenu>
     <Grid Name="MainGrid"  Background="#FF0068FF"> <!-- We want the application to shine in view, tester never has to look for it-->

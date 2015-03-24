@@ -111,6 +111,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
+    <Compile Include="Updater.cs" />
     <Page Include="Forms\PlainTextNote.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -123,8 +124,17 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Forms\UpdateChosen.cs" />
+    <Compile Include="Forms\UpdateForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\UpdateForm.Designer.cs">
+      <DependentUpon>UpdateForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="HTML\HTMLEmbedder.cs" />
     <Compile Include="HTML\Htmlstrings.cs" />
+    <Compile Include="HTML\HttpCallUtil.cs" />
+    <Compile Include="HTML\HttpResult.cs" />
     <Compile Include="KeyboardHook.cs" />
     <Compile Include="RegUtil.cs" />
     <Compile Include="ScreenShot.cs" />
@@ -150,6 +160,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SnippetForm.resx">
       <DependentUpon>SnippetForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\UpdateForm.resx">
+      <DependentUpon>UpdateForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -261,6 +274,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Forms\play.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Forms\update.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Forms\help.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
