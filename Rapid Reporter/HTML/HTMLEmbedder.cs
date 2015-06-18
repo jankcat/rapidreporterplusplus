@@ -13,7 +13,7 @@ namespace Rapid_Reporter.HTML
             var str = MakeImageSrcData(imgFile);
             return
                 string.Format(
-                    "<a href=\"#\" onclick=\"ShowImgEle('imgdiv{0}', 'imgbig{0}', 'imgsmall{0}');\"><img id='imgsmall{0}' src=\"{1}\"></a>{2}",
+                    "<a href=\"#\" onclick=\"ShowImgEle('imgdiv{0}', 'imgbig{0}', 'imgsmall{0}');\"><img id='imgsmall{0}' src=\"\"></a><script>var imgSrcData{0} = \"{1}\"; document.getElementById(\"imgsmall{0}\").src = imgSrcData{0};</script>{2}",
                     imgCount, str, "&nbsp;");
         }
 

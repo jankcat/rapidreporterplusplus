@@ -11,7 +11,7 @@ using System.Resources;
 [assembly: AssemblyConfiguration("Requires .NET framework 4.5")]
 [assembly: AssemblyCompany("Timothy Watkins")]
 [assembly: AssemblyProduct("Rapid Reporter++")]
-[assembly: AssemblyCopyright("Copyright © 2014 Timothy Watkins.")]
+[assembly: AssemblyCopyright("Copyright © 2014-2015 Timothy Watkins.")]
 [assembly: AssemblyTrademark("Rapid Reporter++")]
 [assembly: AssemblyCulture("")]
 
@@ -50,7 +50,7 @@ using System.Resources;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.5.0.0")]
-[assembly: AssemblyFileVersion("2.5.0.0")]
+[assembly: AssemblyVersion("2.6.0.0")]
+[assembly: AssemblyFileVersion("2.6.0.0")]
 [assembly: GuidAttribute("7AEB6D97-FCA8-4197-8DBD-0017E3B00468")]
 [assembly: NeutralResourcesLanguageAttribute("en-US")]
