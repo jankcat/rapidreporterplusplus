@@ -3,10 +3,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows;
 using System.Windows.Forms;
 using Rapid_Reporter.HTML;
-using MessageBox = System.Windows.MessageBox;
 
 // ReSharper disable EmptyGeneralCatchClause
 
@@ -258,7 +256,6 @@ namespace Rapid_Reporter
 
                     File.WriteAllText(htmlFileFull, output, Encoding.UTF8);
                     RemoveOldCsvFile(csvFileFull);
-                    MessageBox.Show("The HTML was created successfully!\nFile created: " + htmlFileFull, "HTML Conversion Successful!", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)
                 {
