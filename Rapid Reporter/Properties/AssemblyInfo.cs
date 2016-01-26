@@ -11,7 +11,7 @@ using System.Resources;
 [assembly: AssemblyConfiguration("Requires .NET framework 4.5")]
 [assembly: AssemblyCompany("Timothy Watkins")]
 [assembly: AssemblyProduct("Rapid Reporter++")]
-[assembly: AssemblyCopyright("Copyright © 2014-2015 Timothy Watkins.")]
+[assembly: AssemblyCopyright("Copyright © 2014-2016 Timothy Watkins.")]
 [assembly: AssemblyTrademark("Rapid Reporter++")]
 [assembly: AssemblyCulture("")]
 

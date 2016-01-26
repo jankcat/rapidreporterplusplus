@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Application = System.Windows.Forms.Application;
 using Color = System.Windows.Media.Color;
 using ColorConverter = System.Windows.Media.ColorConverter;
@@ -46,6 +47,8 @@ namespace Rapid_Reporter.Forms
 
         // Timer to perform recurring actions (timing is set on windows load)
         static Timer _recurrenceTimer = new Timer();
+        private static DispatcherTimer _sessionTimer = new DispatcherTimer();
+        private static int _sessionTicks = 0;
 
         HotKey _hotKey;
 
@@ -63,12 +66,15 @@ namespace Rapid_Reporter.Forms
         {
             RegUtil.InitReg();
             Logger.Record("[SMWidget]: App constructor. Initializing.", "SMWidget", "info");
+
             var trans = GetTransparencyFromReg();
             InitializeComponent();
             SetBgColor(GetBgColorFromReg());
             TransparencySlide.Value = trans;
             var autoUpdate = Updater.GetUpdateCheckingEnabledValue();
             AutoUpdate.IsChecked = autoUpdate;
+            TimerDisplay.Text = "00:00";
+
             _ptn.InitializeComponent();
             _ptn.Sm = this;
             Task.Run((Action)Updater.CheckVersion);
@@ -89,7 +95,7 @@ namespace Rapid_Reporter.Forms
             _recurrenceTimer.Tick += TimerEventProcessor; // this is the function called everytime the timer expires
             _recurrenceTimer.Interval = 90 * 1000; // 30 times 1 second (1000 milliseconds)
             _recurrenceTimer.Start();
-
+            StartTimer();
             NoteContent.Focus();
         }
         // When the widget is on focus, the note taking area is always on focus. Tester can keep writing all the time
@@ -118,6 +124,7 @@ namespace Rapid_Reporter.Forms
         // Before closing the window, we have to close the session and the RTF note
         private void ExitApp(bool dontFinishSession = false)
         {
+            StopTimer();
             if (!dontFinishSession)
             {
                 // Session
@@ -617,10 +624,12 @@ namespace Rapid_Reporter.Forms
             _recurrenceTimer.Tick += TimerEventProcessor; // this is the function called everytime the timer expires
             _recurrenceTimer.Interval = 90 * 1000; // 30 times 1 second (1000 milliseconds)
             _recurrenceTimer.Start();
+            StartTimer();
         }
 
         private void SaveAndNewOption_Click(object sender, RoutedEventArgs e)
         {
+            StopTimer();
             // Session
             Logger.Record("[SaveAndNewOption_Click]: Closing Session...", "SMWidget", "info");
             _currentSession.CloseSession();
@@ -699,6 +708,31 @@ namespace Rapid_Reporter.Forms
         private void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
             Updater.ManualCheckVersion();
+        }
+
+        internal void StartTimer()
+        {
+            _sessionTicks = 0;
+            _sessionTimer = new DispatcherTimer
+            {
+                Interval = new TimeSpan(0, 0, 0, 1, 0)
+            };
+            _sessionTimer.Tick += SessionTimerUpdate;
+            _sessionTimer.Start();
+        }
+
+        internal void StopTimer()
+        {
+            _sessionTimer.Stop();
+        }
+
+        internal void SessionTimerUpdate(object o, EventArgs sender)
+        {
+            _sessionTicks++;
+            var time = new TimeSpan(0, 0, _sessionTicks);
+            TimerDisplay.Text = (time.Hours > 0)
+                ? string.Format("{0}:{1:00}:{2:00}", time.Hours, time.Minutes, time.Seconds)
+                : string.Format("{0:00}:{1:00}", time.Minutes, time.Seconds);
         }
 
         
