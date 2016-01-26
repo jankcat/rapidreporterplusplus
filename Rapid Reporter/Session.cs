@@ -198,9 +198,9 @@ namespace Rapid_Reporter
                     var t = "th";
                     var title = string.Format("{0}{1}", ScenarioId, Htmlstrings.HtmlTitle);
                     File.Delete(htmlFileFull);
-                    var htmlTop = string.Format("{0}{1}{2}{3}{4}{5}{1}{6}", (object)Htmlstrings.AHtmlHead,
-                        (object)title, (object)Htmlstrings.BTitleOut, (object)Htmlstrings.CStyle,
-                        (object) Htmlstrings.DJavascript, (object) Htmlstrings.EBody, (object) Htmlstrings.GTable);
+                    var htmlTop = string.Format("{0}{1}{2}{3}{4}{5}{6}{1}{7}", Htmlstrings.Head,
+                        title, Htmlstrings.TitleEnd, Htmlstrings.StyleSheet, Htmlstrings.Javascript,
+                        Htmlstrings.SharePointMeta, Htmlstrings.Body, Htmlstrings.Table);
                     var topNotes = "";
                     var bottomNotes = "";
 
@@ -252,7 +252,7 @@ namespace Rapid_Reporter
                     topNotes = topNotes + BuildTableRow("td", "", "", "");
                     var output = htmlTop +
                                  string.Format("{0}{1}{2}{3}{4}", topNotes, bottomNotes,
-                                     Htmlstrings.JTableEnd, htmlFileBufferPopups, Htmlstrings.MHtmlEnd);
+                                     Htmlstrings.TableEnd, htmlFileBufferPopups, Htmlstrings.Foot);
 
                     File.WriteAllText(htmlFileFull, output, Encoding.UTF8);
                     RemoveOldCsvFile(csvFileFull);
