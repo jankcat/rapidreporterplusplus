@@ -13,13 +13,13 @@ namespace Rapid_Reporter
             var parsedVersion = GetServerVersion();
             if (parsedVersion == null)
             {
-                SetAllowedToCheckValue(new Version(0, 0, 0, 0));
+                SetSkippedUpdateValue(new Version(0, 0, 0, 0));
                 MessageBox.Show("Unable to retrieve latest version number from GitHub.");
                 return;
             }
             if (UpToDateWithLatest(parsedVersion))
             {
-                SetAllowedToCheckValue(new Version(0, 0, 0, 0));
+                SetSkippedUpdateValue(new Version(0, 0, 0, 0));
                 MessageBox.Show("You are currently up to date!\r\nWe will let you know if a new version comes down the pipeline.");
                 return;
             }
@@ -34,14 +34,14 @@ namespace Rapid_Reporter
             switch (updateDlg.Choice)
             {
                 case UpdateChosen.Update:
-                    SetAllowedToCheckValue(new Version(0, 0, 0, 0));
+                    SetSkippedUpdateValue(new Version(0, 0, 0, 0));
                     System.Diagnostics.Process.Start("https://github.com/jankcat/rapidreporterplusplus/releases");
                     return;
                 case UpdateChosen.Skip:
-                    SetAllowedToCheckValue(parsedVersion);
+                    SetSkippedUpdateValue(parsedVersion);
                     return;
                 case UpdateChosen.Later:
-                    SetAllowedToCheckValue(new Version(0, 0, 0, 0));
+                    SetSkippedUpdateValue(new Version(0, 0, 0, 0));
                     return;
             }
         }
@@ -57,6 +57,7 @@ namespace Rapid_Reporter
 
         private static bool AllowedToCheckForUpdates(Version serverVersion)
         {
+            if (!GetUpdateCheckingEnabledValue()) return false;
             var str = RegUtil.ReadRegKey("UpdateToSkip");
             if (string.IsNullOrWhiteSpace(str))
                 return true;
@@ -72,9 +73,23 @@ namespace Rapid_Reporter
             return regver != serverVersion;
         }
 
-        private static void SetAllowedToCheckValue(Version updateToSkip)
+        private static void SetSkippedUpdateValue(Version updateToSkip)
         {
             RegUtil.CreateRegKey("UpdateToSkip", updateToSkip.ToString());
+        }
+
+        internal static bool GetUpdateCheckingEnabledValue()
+        {
+            var bypassStr = RegUtil.ReadRegKey("CheckForUpdates");
+            if (string.IsNullOrWhiteSpace(bypassStr)) return true;
+            bool bypass;
+            var success = bool.TryParse(bypassStr, out bypass);
+            return (!success) || bypass;
+        }
+
+        internal static void SetUpdateCheckingEnabledValue(bool check = true)
+        {
+            RegUtil.CreateRegKey("CheckForUpdates", check.ToString());
         }
 
         private static bool UpToDateWithLatest(Version latest)

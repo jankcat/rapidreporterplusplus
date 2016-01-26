@@ -4,9 +4,6 @@
     <Window.ContextMenu>
         <ContextMenu Name="cm">
             <MenuItem Name="TimerMenu" Header="Time until end..." IsEnabled="False">
-                <!--1 minute and 3 minutes are only for debugging:-->
-                <!--<MenuItem Header="1 min" Name="t1" Click="ProgressTimer_Click" IsCheckable="True" Checked="timer_Checked"><MenuItem.Icon><Image Source="icontimer.png" /></MenuItem.Icon></MenuItem>-->
-                <!--<MenuItem Header="3 min" Name="t3" Click="ProgressTimer_Click" IsCheckable="True" Checked="timer_Checked"><MenuItem.Icon><Image Source="icontimer.png" /></MenuItem.Icon></MenuItem>-->
                 <MenuItem Header="120 min from now" Name="t120"  Click="ProgressTimer_Click" IsCheckable="True" Checked="timer_Checked"><MenuItem.Icon><Image Source="icontimer.png" /></MenuItem.Icon></MenuItem>
                 <MenuItem Header="90 min from now" Name="t90"  Click="ProgressTimer_Click" IsCheckable="True" Checked="timer_Checked"><MenuItem.Icon><Image Source="icontimer.png" /></MenuItem.Icon></MenuItem>
                 <MenuItem Header="60 min from now" Name="t60" Click="ProgressTimer_Click" IsCheckable="True" Checked="timer_Checked"><MenuItem.Icon><Image Source="icontimer.png" /></MenuItem.Icon></MenuItem>
@@ -19,6 +16,11 @@
                 <MenuItem.Icon>
                     <Image Source="paintbrush.png" Width="20" Height="20"/></MenuItem.Icon></MenuItem>
             <MenuItem Name="UpdateButton" Header="Check For Updates..." Click="UpdateButton_Click">
+                <MenuItem.Icon>
+                    <Image Source="update.png" Width="20" Height="20" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Name="AutoUpdate" Header="Check for Updates on Startup" IsCheckable="True" Checked="AutoUpdate_Checked" Unchecked="AutoUpdate_Unchecked">
                 <MenuItem.Icon>
                     <Image Source="update.png" Width="20" Height="20" />
                 </MenuItem.Icon>
