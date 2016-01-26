@@ -63,8 +63,12 @@ namespace Rapid_Reporter.Forms
         {
             RegUtil.InitReg();
             Logger.Record("[SMWidget]: App constructor. Initializing.", "SMWidget", "info");
+            var trans = GetTransparencyFromReg();
             InitializeComponent();
-            UpdateSettingsInUi();
+            SetBgColor(GetBgColorFromReg());
+            TransparencySlide.Value = trans;
+            var autoUpdate = Updater.GetUpdateCheckingEnabledValue();
+            AutoUpdate.IsChecked = autoUpdate;
             _ptn.InitializeComponent();
             _ptn.Sm = this;
             Task.Run((Action)Updater.CheckVersion);
@@ -525,15 +529,6 @@ namespace Rapid_Reporter.Forms
         {
             Logger.Record("[AutoUpdate_Unchecked]: Updating registry", "SMWidget", "info");
             Updater.SetUpdateCheckingEnabledValue(false);
-        }
-
-        private void UpdateSettingsInUi()
-        {
-            SetBgColor(GetBgColorFromReg());
-            var trans = GetTransparencyFromReg();
-            TransparencySlide.Value = trans;
-            var autoUpdate = Updater.GetUpdateCheckingEnabledValue();
-            AutoUpdate.IsChecked = autoUpdate;
         }
 
         // Show or hide the enhanced notes window.
