@@ -22,15 +22,17 @@ namespace Rapid_Reporter.HTML
                 "\r\n            </h1>\r\n            <!--[if IE]><h5>For best results, use Chrome or Firefox.</h5><![endif]-->\r\n" +
                 "            <div id=\"aroundtable\">\r\n                <table border=\"1\">\r\n";
 
-            Head = "<html>\r\n    <head>\r\n        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\r\n        <!--RR++V2.7-->\r\n        <title>";
+            Head =
+                "<html xmlns:mso=\"urn:schemas-microsoft-com:office:office\" xmlns:msdt=\"uuid:C2F41010-65B3-11d1-A29F-00AA00C14882\">\r\n    <head>\r\n" +
+                "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\r\n        <!--RR++V2.7-->\r\n        <title>";
             TitleEnd = "</title>\r\n";
-            Body = "<body>\r\n        <div id=\"allbody\">\r\n            <h1>";
+            Body = "    <body>\r\n        <div id=\"allbody\">\r\n            <h1>";
             TableEnd = "\r\n                </table>\r\n            </div>\r\n";
             Foot = "\r\n        </div>\r\n    </body>\r\n</html>\r\n";
 
             SharePointMeta =
-                "<!--[if gte mso 9]><xml>\r\n<mso:CustomDocumentProperties>\r\n<mso:ContentType msdt:dt=\"string\">Document</mso:ContentType>\r\n" +
-                "<mso:Doc_x0020_Type msdt:dt=\"string\">Session Notes</mso:Doc_x0020_Type>\r\n</mso:CustomDocumentProperties>\r\n</xml><![endif]-->";
+                "\r\n    \r\n<!--[if gte mso 9]><xml>\n<mso:CustomDocumentProperties>\r\n<mso:ContentType msdt:dt=\"string\">Document</mso:ContentType>\r\n" +
+                "<mso:Doc_x0020_Type msdt:dt=\"string\">Session Notes</mso:Doc_x0020_Type>\r\n</mso:CustomDocumentProperties>\n</xml><![endif]-->\r\n    </head>\r\n";
 
             StyleSheet =
                 "        <style>\r\n            html *\r\n            {\r\n                font-family: Verdana !important;\r\n                font-size: 11px;\r\n            }\r\n" +
@@ -60,7 +62,7 @@ namespace Rapid_Reporter.HTML
                 "            ele.style.display = \"inline\";\r\n            }\r\n" +
                 "            function HidePlaintextNote(eleId)\r\n            {\r\n\t            var ele = document.getElementById(eleId);\r\n" +
                 "                var eletable = document.getElementById('aroundtable');\r\n\t            eletable.style.display = \"inline\";\r\n\t" +
-                "            ele.style.display = \"none\";\r\n            }\r\n        </script>\r\n    </head>";
+                "            ele.style.display = \"none\";\r\n            }\r\n        </script>";
         }
 	}
 }
