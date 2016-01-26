@@ -38,6 +38,11 @@
                     <Image Source="iconshot.png" />
                 </MenuItem.Icon>
             </MenuItem>
+            <MenuItem Name="ShowScreenshotPreviews" Header="Show Screenshots after taking" IsCheckable="True" Checked="ShowScreenshotPreviews_Checked" Unchecked="ShowScreenshotPreviews_Unchecked">
+                <MenuItem.Icon>
+                    <Image Source="iconshot.png" />
+                </MenuItem.Icon>
+            </MenuItem>
             <MenuItem Name="ColorPicker" Header="Pick Color" Click="ColorPicker_OnClick">
                 <MenuItem.Icon>
                     <Image Source="paintbrush.png" Width="20" Height="20"/>

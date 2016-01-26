@@ -37,5 +37,53 @@ namespace Rapid_Reporter
                 return null;
             }
         }
+
+        internal static int ScreenShotPreviewX
+        {
+            get
+            {
+                var str = ReadRegKey("ScreenShotPreviewX");
+                if (string.IsNullOrWhiteSpace(str)) return -99999999;
+                int val;
+                var succcess = int.TryParse(str, out val);
+                return succcess ? val : -99999999;
+            }
+            set
+            {
+                CreateRegKey("ScreenShotPreviewX", value.ToString());
+            }
+        }
+
+        internal static int ScreenShotPreviewY
+        {
+            get
+            {
+                var str = ReadRegKey("ScreenShotPreviewY");
+                if (string.IsNullOrWhiteSpace(str)) return -99999999;
+                int val;
+                var succcess = int.TryParse(str, out val);
+                return succcess ? val : -99999999;
+            }
+            set
+            {
+                CreateRegKey("ScreenShotPreviewY", value.ToString());
+            }
+        }
+
+        internal static bool ScreenShotPreviewEnabled
+        {
+            get
+            {
+                var str = ReadRegKey("ScreenShotPreviewEnabled");
+                if (string.IsNullOrWhiteSpace(str)) return false;
+                bool val;
+                var succcess = bool.TryParse(str, out val);
+                return succcess && val;
+            }
+            set
+            {
+                CreateRegKey("ScreenShotPreviewEnabled", value.ToString());
+            }
+        }
     }
 }

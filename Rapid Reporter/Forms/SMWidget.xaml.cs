@@ -50,6 +50,9 @@ namespace Rapid_Reporter.Forms
         private static DispatcherTimer _sessionTimer = new DispatcherTimer();
         private static int _sessionTicks = 0;
 
+        private static bool _showScreenshotPreviews;
+        private static readonly ScreenShotPreview _screenShotPreviewForm = new ScreenShotPreview();
+
         HotKey _hotKey;
 
         // These two classes are external.
@@ -74,7 +77,8 @@ namespace Rapid_Reporter.Forms
             var autoUpdate = Updater.GetUpdateCheckingEnabledValue();
             AutoUpdate.IsChecked = autoUpdate;
             TimerDisplay.Text = "00:00";
-
+            _showScreenshotPreviews = RegUtil.ScreenShotPreviewEnabled;
+            ShowScreenshotPreviews.IsChecked = _showScreenshotPreviews;
             _ptn.InitializeComponent();
             _ptn.Sm = this;
             Task.Run((Action)Updater.CheckVersion);
@@ -435,15 +439,17 @@ namespace Rapid_Reporter.Forms
             var edit = Control.ModifierKeys == Keys.Shift;
             var direct = Control.ModifierKeys == Keys.Control;
             if (edit || !direct) WindowState = WindowState.Minimized;
-            Image imgOut;
+            Bitmap bmpOut;
             var ss = new ScreenShot();
             if (!direct && !edit)
             {
-                imgOut = ss.CaptureSnippet();
+                Logger.Record("[ScreenShot_Click]: Snippet Mode!", "SMWidget", "info");
+                bmpOut = ss.CaptureSnippet();
             }
             else
             {
-                imgOut = ss.CaptureScreenShot();
+                Logger.Record("[ScreenShot_Click]: Fullscreen Mode!", "SMWidget", "info");
+                bmpOut = ss.CaptureScreenShot();
             }
             if (ss.Canceled)
             {
@@ -451,10 +457,11 @@ namespace Rapid_Reporter.Forms
                 Logger.Record("[ScreenShot_Click]: Cancelled screenshot", "SMWidget", "info");
                 return;
             }
-            AddScreenshot2Note(imgOut);                                 
+            AddScreenshot2Note(bmpOut);                                 
             Logger.Record("[ScreenShot_Click]: Captured " + _screenshotName + ", edit: " + edit, "SMWidget", "info");
             if (edit)                                                                   
-            {                                                                           
+            {
+                Logger.Record("[ScreenShot_Click]: Showing mspaint.exe, to edit the shot.", "SMWidget", "info");
                 var paint = new Process
                     {
                         StartInfo =
@@ -465,6 +472,12 @@ namespace Rapid_Reporter.Forms
                     };                                          
                 paint.Start();                                                                          
             }
+            else if (_showScreenshotPreviews)
+            {
+                _screenShotPreviewForm.Show();
+                _screenShotPreviewForm.UpdateScreenshot(bmpOut);
+            }
+
             if (edit || !direct) WindowState = WindowState.Normal; 
         }
 
@@ -735,6 +748,17 @@ namespace Rapid_Reporter.Forms
                 : string.Format("{0:00}:{1:00}", time.Minutes, time.Seconds);
         }
 
-        
+
+        private void ShowScreenshotPreviews_Checked(object sender, RoutedEventArgs e)
+        {
+            _showScreenshotPreviews = true;
+            RegUtil.ScreenShotPreviewEnabled = _showScreenshotPreviews;
+        }
+
+        private void ShowScreenshotPreviews_Unchecked(object sender, RoutedEventArgs e)
+        {
+            _showScreenshotPreviews = false;
+            RegUtil.ScreenShotPreviewEnabled = _showScreenshotPreviews;
+        }
     }
 }
