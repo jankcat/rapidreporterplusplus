@@ -507,6 +507,13 @@ namespace Rapid_Reporter.Forms
                 {
                     bitmap.Save(_currentSession.WorkingDir + _screenshotName, ImageFormat.Jpeg);
                     _currentSession.UpdateNotes("Screenshot", _screenshotName);
+                    var item = new MenuItem
+                    {
+                        Header = string.Format("Screenshot Saved! Filename: {0}", _screenshotName),
+                        IsEnabled = false
+                    };
+                    NoteHistory.Items.Add(item);
+                    NoteHistory.Visibility = Visibility.Visible;
                 }
                 catch (Exception ex)
                 {
@@ -598,6 +605,13 @@ namespace Rapid_Reporter.Forms
         {
             Logger.Record("[SavePlainTextNote]: PlainText note saved by user (" + filename + ")", "SMWidget", "info");
             _currentSession.UpdateNotes("PlainText Note", filename);
+            var item = new MenuItem
+            {
+                Header = string.Format("Plaintext Note Saved! Filename: {0}", filename),
+                IsEnabled = false
+            };
+            NoteHistory.Items.Add(item);
+            NoteHistory.Visibility = Visibility.Visible;
         }
 
         // Makes space for a new note
