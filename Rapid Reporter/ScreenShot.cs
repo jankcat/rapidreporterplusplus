@@ -40,7 +40,6 @@ namespace Rapid_Reporter
             int minX = 0, minY = 0, maxX = 0, maxY = 0;
             foreach (var oneScreen in Screen.AllScreens)
             {
-                Logger.Record("\t[CaptureSnippet]: AllScreens[]: SNIPPET" + oneScreen.Bounds.ToString(), "ScreenShot", "info");
                 minX = Math.Min(minX, oneScreen.Bounds.Left);
                 minY = Math.Min(minY, oneScreen.Bounds.Top);
                 maxX = Math.Max(maxX, oneScreen.Bounds.Width + oneScreen.Bounds.X);
@@ -64,7 +63,6 @@ namespace Rapid_Reporter
 
         public Bitmap CaptureScreenShot()
         {
-            Logger.Record("[CaptureScreenshot]: Will take a screenshot of the monitor.", "ScreenShot", "info");
             int minX = 0, minY = 0, maxX = 0, maxY = 0;
 
             /*
@@ -91,14 +89,12 @@ namespace Rapid_Reporter
 
             foreach (var oneScreen in Screen.AllScreens)
             {
-                Logger.Record("\t[CaptureScreenshot]: AllScreens[]: " + oneScreen.Bounds.ToString(), "ScreenShot", "info");
                 minX = Math.Min(minX, oneScreen.Bounds.Left);
                 minY = Math.Min(minY, oneScreen.Bounds.Top);
                 maxX = Math.Max(maxX, oneScreen.Bounds.Width + oneScreen.Bounds.X);
                 maxY = Math.Max(maxY, oneScreen.Bounds.Height + oneScreen.Bounds.Y);
             }
             var fullBounds = new Rectangle(minX, minY, maxX - minX, maxY - minY);
-            Logger.Record("[CaptureScreenshot]: fullScreen[]: " + fullBounds, "ScreenShot", "info");
 
             var hDesk = GetDesktopWindow();
             var hSrce = GetWindowDC(hDesk);
@@ -113,7 +109,6 @@ namespace Rapid_Reporter
             DeleteObject(hBmp);
             DeleteDC(hDest);
             ReleaseDC(hDesk, hSrce);
-            Logger.Record("[CaptureScreenshot]: BMP object ready, returning it to calling function", "ScreenShot", "info");
             return (bmp);
         }
 

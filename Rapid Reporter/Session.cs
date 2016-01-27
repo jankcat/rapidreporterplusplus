@@ -48,8 +48,6 @@ namespace Rapid_Reporter
         // Start Session and Close Session prepare/finalize the log file
         public void StartSession()
         {
-            Logger.Record("[StartSession]: Session configuration starting", "Session", "info");
-
             StartingTime = DateTime.Now; // The time the session started is used for many things, like knowing the session file name
             _sessionFile = StartingTime.ToString("yyyyMMdd_HHmmss") + ".csv";
             _sessionFileFull = WorkingDir + _sessionFile; // All files should be written to a working directory -- be it current or not.
@@ -64,8 +62,6 @@ namespace Rapid_Reporter
 
         internal bool ResumeSession()
         {
-            Logger.Record("[ResumeSession]: Session configuration starting", "Session", "info");
-
             var csvFile = SelectSessionCsvForOpen();
             if (string.IsNullOrWhiteSpace(csvFile)) return false;
             LoadCsvIntoSession(csvFile);
@@ -80,8 +76,6 @@ namespace Rapid_Reporter
 
         public void CloseSession() // Not closing directly, we first finalize the session
         {
-            Logger.Record("[CloseSession]: Session closing...", "Session", "info");
-
             // Why this if? We will only add the 'end session' note if we were past the charter step.
             if (!String.Equals(Versions, ""))
             {
@@ -90,11 +84,9 @@ namespace Rapid_Reporter
                             duration.Hours.ToString(CultureInfo.InvariantCulture).PadLeft(2, '0') + ":" +
                             duration.Minutes.ToString(CultureInfo.InvariantCulture).PadLeft(2, '0') + ":" +
                             duration.Seconds.ToString(CultureInfo.InvariantCulture).PadLeft(2, '0'));
-                Logger.Record("[CloseSession]: Starting csv to html method...", "Session", "info");
                 Csv2Html(_sessionFileFull, false);
             }
 
-            Logger.Record("[CloseSession]: ...Session closed", "Session", "info");
         }
 
         /** Notes **/
@@ -105,33 +97,35 @@ namespace Rapid_Reporter
         internal void UpdateNotes(int type, string note)
         {
             UpdateNotes(NoteTypes[type], note);
-            Logger.Record("[UpdateNotes isss]: Note added to session log.", "Session", "info");
         }
         internal void UpdateNotes(string type, string note)
         {
             SessionNote = DateTime.Now + "," + type + ",\"" + note + "\"\n";
             SaveToSessionNotes(SessionNote);
-            Logger.Record("[UpdateNotes ss]: Note added to session log", "Session", "info");
         }
 
         // Save all notes on file, after every single note
         private void SaveToSessionNotes(string note)
         {
-            Logger.Record("[SaveToSessionNotes]: File will be updated and saved to " + _sessionFile, "Session", "info");
-            bool exDrRetry;
 
-            do
-            { exDrRetry = false;
-                try
-                {
-                    File.AppendAllText(_sessionFileFull, note, Encoding.UTF8);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Record("\t[SaveToSessionNotes]: EXCEPTION reached - Session Note file could not be saved (" + _sessionFile + ")", "Session", "error");
-                    exDrRetry = Logger.FileErrorMessage(ex, "SaveToSessionNotes", _sessionFile);
-                }
-            } while (exDrRetry);
+            try
+            {
+                File.AppendAllText(_sessionFileFull, note, Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(string.Format(
+                    "Ouch! An error occured when trying to write the note into a file.\n" +
+                    "The file name is: {0}\n\n" + "Possible causes:\n" +
+                    " -- You don't have write permissions to the folder or file;\n" +
+                    " -- The file is locked by another program (Excel? Explorer preview?);\n" +
+                    " -- Windows preview pane is holding the file blocked for editing;\n" +
+                    " -- (there may be other reasons).\n\n" + "Possible solutions:\n" +
+                    " -- Set write permissions to the folder or file;\n" +
+                    " -- Close another application that may be using the file;\n" +
+                    " -- Select another file in explorer.\n\n" + "Exception details for investigation:\n{1}",
+                    _sessionFile, ex.Message));
+            }
         }
 
         private string DiscoverSavePath(string csvFile)
@@ -183,134 +177,138 @@ namespace Rapid_Reporter
 
         public void Csv2Html(string csvFile, bool relativePath)
         {
-            Logger.Record("[CSV2HTML]: HTML Report building", "Session", "info");
             var csvFileFull = relativePath ? WorkingDir + csvFile : csvFile;
             var htmlFileFull = DiscoverSavePath(csvFile);
-            bool exDrRetry;
-
-            do
-            {
-                exDrRetry = false;
+            
                 var htmlFileBufferPopups = "";
-                try
-                {
-                    var imgCount = 0;
-                    var ptnCount = 0;
-                    var t = "th";
-                    var title = string.Format("{0}{1}", ScenarioId, Htmlstrings.HtmlTitle);
-                    File.Delete(htmlFileFull);
-                    var htmlTop = string.Format("{0}{1}{2}{3}{4}{5}{6}{1}{7}", Htmlstrings.Head,
-                        title, Htmlstrings.TitleEnd, Htmlstrings.StyleSheet, Htmlstrings.Javascript,
-                        Htmlstrings.SharePointMeta, Htmlstrings.Body, Htmlstrings.Table);
-                    var topNotes = "";
-                    var bottomNotes = "";
+            try
+            {
+                var imgCount = 0;
+                var ptnCount = 0;
+                var t = "th";
+                var title = string.Format("{0}{1}", ScenarioId, Htmlstrings.HtmlTitle);
+                File.Delete(htmlFileFull);
+                var htmlTop = string.Format("{0}{1}{2}{3}{4}{5}{6}{1}{7}", Htmlstrings.Head,
+                    title, Htmlstrings.TitleEnd, Htmlstrings.StyleSheet, Htmlstrings.Javascript,
+                    Htmlstrings.SharePointMeta, Htmlstrings.Body, Htmlstrings.Table);
+                var topNotes = "";
+                var bottomNotes = "";
 
-                    foreach (var line in File.ReadAllLines(csvFileFull, Encoding.UTF8))
-					{
-                        if ("" == line) continue;
-                        var note = ""; 
-                        var thisLine = line.Split(',');
-                        if (thisLine.Length > 2)
+                foreach (var line in File.ReadAllLines(csvFileFull, Encoding.UTF8))
+                {
+                    if ("" == line) continue;
+                    var note = "";
+                    var thisLine = line.Split(',');
+                    if (thisLine.Length > 2)
+                    {
+                        note = thisLine[2].Replace("\"", "");
+                        switch (thisLine[1])
                         {
-                            note = thisLine[2].Replace("\"", "");
-                            switch (thisLine[1])
-                            {
-                                case @"Screenshot":
-                                    if (!File.Exists(WorkingDir + note))
-                                    {
-                                        note += " not found.";
-                                        break;
-                                    }
-                                    note = HtmlEmbedder.BuildSessionRow_Img(imgCount, WorkingDir + note);
-                                    htmlFileBufferPopups += HtmlEmbedder.BuildPopUp_Img(imgCount);
-                                    imgCount++;
+                            case @"Screenshot":
+                                if (!File.Exists(WorkingDir + note))
+                                {
+                                    note += " not found.";
                                     break;
-                                case @"PlainText Note":
-                                    if (!File.Exists(WorkingDir + note))
-                                    {
-                                        note += " not found.";
-                                        break;
-                                    }
-                                    htmlFileBufferPopups += HtmlEmbedder.BuildPopUp_PTNote(ptnCount, WorkingDir + note);
-                                    note = HtmlEmbedder.BuildSessionRow_PTNote(ptnCount);
-                                    ptnCount++;
+                                }
+                                note = HtmlEmbedder.BuildSessionRow_Img(imgCount, WorkingDir + note);
+                                htmlFileBufferPopups += HtmlEmbedder.BuildPopUp_Img(imgCount);
+                                imgCount++;
+                                break;
+                            case @"PlainText Note":
+                                if (!File.Exists(WorkingDir + note))
+                                {
+                                    note += " not found.";
                                     break;
-                            }
+                                }
+                                htmlFileBufferPopups += HtmlEmbedder.BuildPopUp_PTNote(ptnCount, WorkingDir + note);
+                                note = HtmlEmbedder.BuildSessionRow_PTNote(ptnCount);
+                                ptnCount++;
+                                break;
                         }
-
-					    if (thisLine[1] == "Type" || thisLine[1] == "Session Reporter" ||
-					        (thisLine[1] == "Scenario ID" || thisLine[1] == "Session Charter") ||
-					        (thisLine[1] == "Environment" || thisLine[1] == "Versions" || thisLine[1] == "Summary"))
-					    {
-					        topNotes += BuildTableRow(t, thisLine[1], thisLine[0], note);
-					    }
-					    else
-					    {
-					        bottomNotes += BuildTableRow(t, thisLine[1], thisLine[0], note);
-					    }
-                        t = "td";
                     }
-                    topNotes = topNotes + BuildTableRow("td", "", "", "");
-                    var output = htmlTop +
-                                 string.Format("{0}{1}{2}{3}{4}", topNotes, bottomNotes,
-                                     Htmlstrings.TableEnd, htmlFileBufferPopups, Htmlstrings.Foot);
 
-                    File.WriteAllText(htmlFileFull, output, Encoding.UTF8);
-                    RemoveOldCsvFile(csvFileFull);
+                    if (thisLine[1] == "Type" || thisLine[1] == "Session Reporter" ||
+                        (thisLine[1] == "Scenario ID" || thisLine[1] == "Session Charter") ||
+                        (thisLine[1] == "Environment" || thisLine[1] == "Versions" || thisLine[1] == "Summary"))
+                    {
+                        topNotes += BuildTableRow(t, thisLine[1], thisLine[0], note);
+                    }
+                    else
+                    {
+                        bottomNotes += BuildTableRow(t, thisLine[1], thisLine[0], note);
+                    }
+                    t = "td";
                 }
-                catch (Exception ex)
-                {
-                    Logger.Record("[CSV2HTML]: EXCEPTION reached - Session Report file could not be saved (" + htmlFileFull + ")", "Session", "error");
-                    exDrRetry = Logger.FileErrorMessage(ex, "CSV to HTML", htmlFileFull);
-                }
-            } while (exDrRetry);
-            Logger.Record("[CSV2HTML]: HTML Report built, done.", "Session", "info");
+                topNotes = topNotes + BuildTableRow("td", "", "", "");
+                var output = htmlTop +
+                             string.Format("{0}{1}{2}{3}{4}", topNotes, bottomNotes,
+                                 Htmlstrings.TableEnd, htmlFileBufferPopups, Htmlstrings.Foot);
+
+                File.WriteAllText(htmlFileFull, output, Encoding.UTF8);
+                RemoveOldCsvFile(csvFileFull);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(string.Format(
+                    "Ouch! An error occured when trying to write the note into a file.\n" +
+                    "The file name is: {0}\n\n" + "Possible causes:\n" +
+                    " -- You don't have write permissions to the folder or file;\n" +
+                    " -- The file is locked by another program (Excel? Explorer preview?);\n" +
+                    " -- Windows preview pane is holding the file blocked for editing;\n" +
+                    " -- (there may be other reasons).\n\n" + "Possible solutions:\n" +
+                    " -- Set write permissions to the folder or file;\n" +
+                    " -- Close another application that may be using the file;\n" +
+                    " -- Select another file in explorer.\n\n" + "Exception details for investigation:\n{1}",
+                    htmlFileFull, ex.Message));
+            }
+
         }
 
         private void LoadCsvIntoSession(string csvFile)
         {
-            Logger.Record("[LoadCsvIntoSession]: Grabbing CSV file variables", "Session", "info");
-
-            bool exDrRetry;
-            do
+            try
             {
-                exDrRetry = false;
-                try
+                foreach (var line in File.ReadAllLines(csvFile, Encoding.UTF8))
                 {
-                    foreach (var line in File.ReadAllLines(csvFile, Encoding.UTF8))
+                    if ("" == line) continue;
+                    var thisLine = line.Split(',');
+                    if (thisLine.Length <= 2) continue;
+                    var note = thisLine[2].Replace("\"", "");
+                    switch (thisLine[1])
                     {
-                        if ("" == line) continue;
-                        var thisLine = line.Split(',');
-                        if (thisLine.Length <= 2) continue;
-                        var note = thisLine[2].Replace("\"", "");
-                        switch (thisLine[1])
-                        {
-                            case @"Session Reporter":
-                                Tester = note;
-                                StartingTime = DateTime.Parse(thisLine[0]);
-                                break;
-                            case @"Scenario ID":
-                                ScenarioId = note;
-                                break;
-                            case @"Session Charter":
-                                Charter = note;
-                                break;
-                            case @"Environment":
-                                Environment = note;
-                                break;
-                            case @"Versions":
-                                Versions = note;
-                                break;
-                        }
+                        case @"Session Reporter":
+                            Tester = note;
+                            StartingTime = DateTime.Parse(thisLine[0]);
+                            break;
+                        case @"Scenario ID":
+                            ScenarioId = note;
+                            break;
+                        case @"Session Charter":
+                            Charter = note;
+                            break;
+                        case @"Environment":
+                            Environment = note;
+                            break;
+                        case @"Versions":
+                            Versions = note;
+                            break;
                     }
                 }
-                catch (Exception ex)
-                {
-                    Logger.Record("[LoadCsvIntoSession]: EXCEPTION reached - Session Report file could not be read (" + csvFile + ")", "Session", "error");
-                    exDrRetry = Logger.FileErrorMessage(ex, "LoadCsvIntoSession", csvFile);
-                }
-            } while (exDrRetry);
-            Logger.Record("[LoadCsvIntoSession]: Grabbing CSV file variables done.", "Session", "info");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(string.Format(
+                    "Ouch! An error occured when trying to write the note into a file.\n" +
+                    "The file name is: {0}\n\n" + "Possible causes:\n" +
+                    " -- You don't have write permissions to the folder or file;\n" +
+                    " -- The file is locked by another program (Excel? Explorer preview?);\n" +
+                    " -- Windows preview pane is holding the file blocked for editing;\n" +
+                    " -- (there may be other reasons).\n\n" + "Possible solutions:\n" +
+                    " -- Set write permissions to the folder or file;\n" +
+                    " -- Close another application that may be using the file;\n" +
+                    " -- Select another file in explorer.\n\n" + "Exception details for investigation:\n{1}",
+                    csvFile, ex.Message));
+            }
         }
     }
 }

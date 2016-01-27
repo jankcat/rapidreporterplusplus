@@ -116,7 +116,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
-    <Compile Include="Note.cs" />
     <Compile Include="Updater.cs" />
     <Page Include="Forms\PlainTextNote.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -144,7 +143,6 @@
     <Compile Include="KeyboardHook.cs" />
     <Compile Include="RegUtil.cs" />
     <Compile Include="ScreenShot.cs" />
-    <Compile Include="Logger.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Session.cs" />

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -59,12 +58,10 @@ namespace Rapid_Reporter
             {
                 _dictHotKeyToCalBackProc.Add(Id, this);
             }
-            catch (Exception)
+            catch
             {
-                Logger.Record("[Register]: Error when registering HotKey, duplicate key. Possible error on Unregistering", "KeyboardHook", "error");
             }
 
-            Debug.Print(result.ToString() + ", " + Id + ", " + virtualKeyCode);
             return result;
         }
 
