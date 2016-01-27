@@ -141,7 +141,6 @@
     <Compile Include="HTML\HttpCallUtil.cs" />
     <Compile Include="HTML\HttpResult.cs" />
     <Compile Include="KeyboardHook.cs" />
-    <Compile Include="RegUtil.cs" />
     <Compile Include="ScreenShot.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -288,6 +287,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Forms\help.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RapidLib\RapidLib.csproj">
+      <Project>{b80dd8af-b8d5-41b7-be9c-c70e74293de6}</Project>
+      <Name>RapidLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

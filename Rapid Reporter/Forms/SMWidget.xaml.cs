@@ -13,8 +13,8 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using RapidLib;
 using Application = System.Windows.Forms.Application;
-using Color = System.Windows.Media.Color;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MenuItem = System.Windows.Controls.MenuItem;
 using MessageBox = System.Windows.MessageBox;
@@ -628,13 +628,13 @@ namespace Rapid_Reporter.Forms
             var r = colorDialog.Color.R;
             var g = colorDialog.Color.G;
             var b = colorDialog.Color.B;
-            SetBgColor(Color.FromArgb(colorDialog.Color.A, r, g, b));
+            SetBgColor(System.Drawing.Color.FromArgb(colorDialog.Color.A, r, g, b));
         }
 
-        private void SetBgColor(Color color)
+        private void SetBgColor(System.Drawing.Color color)
         {
             RegUtil.BackgroundColor = color;
-            MainGrid.Background = new SolidColorBrush(color);
+            MainGrid.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B));
         }
 
         private void ResumeSession_Click(object sender, RoutedEventArgs e)

@@ -1,33 +1,36 @@
 ﻿using System;
+using System.Drawing;
 using System.Globalization;
 using Microsoft.Win32;
-using System.Windows.Media;
-using ColorConverter = System.Windows.Media.ColorConverter;
 
-namespace Rapid_Reporter
+namespace RapidLib
 {
-    internal static class RegUtil
+    
+    public static class RegUtil
     {
-        internal static void InitReg()
+        public static void InitReg()
         {
-            Registry.CurrentUser.CreateSubKey("Software").CreateSubKey("RapidReporterPP");
+            var registryKey = Registry.CurrentUser.CreateSubKey("Software");
+            if (registryKey != null)
+                registryKey.CreateSubKey("RapidReporterPP");
         }
 
         private static void CreateRegKey(string name, string value)
         {
-            var subKey = Registry.CurrentUser.CreateSubKey("Software").CreateSubKey("RapidReporterPP");
-            if (subKey == null)
-                return;
+            var registryKey = Registry.CurrentUser.CreateSubKey("Software");
+            if (registryKey == null) return;
+            var subKey = registryKey.CreateSubKey("RapidReporterPP");
+            if (subKey == null) return;
             subKey.SetValue(name, value);
             subKey.Close();
         }
 
         private static string ReadRegKey(string name)
         {
-            // ReSharper disable once SuggestVarOrType_SimpleTypes
-            RegistryKey registryKey = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("RapidReporterPP");
-            if (registryKey == null)
-                return "";
+            var openSubKey = Registry.CurrentUser.OpenSubKey("Software");
+            if (openSubKey == null) return null;
+            var registryKey = openSubKey.OpenSubKey("RapidReporterPP");
+            if (registryKey == null) return "";
             try
             {
                 var str = registryKey.GetValue(name).ToString();
@@ -40,7 +43,7 @@ namespace Rapid_Reporter
             }
         }
 
-        internal static int ScreenShotPreviewX
+        public static int ScreenShotPreviewX
         {
             get
             {
@@ -56,7 +59,7 @@ namespace Rapid_Reporter
             }
         }
 
-        internal static int ScreenShotPreviewY
+        public static int ScreenShotPreviewY
         {
             get
             {
@@ -72,7 +75,7 @@ namespace Rapid_Reporter
             }
         }
 
-        internal static bool ScreenShotPreviewEnabled
+        public static bool ScreenShotPreviewEnabled
         {
             get
             {
@@ -88,7 +91,7 @@ namespace Rapid_Reporter
             }
         }
 
-        internal static bool CheckForUpdates
+        public static bool CheckForUpdates
         {
             get
             {
@@ -104,24 +107,22 @@ namespace Rapid_Reporter
             }
         }
 
-        internal static Color BackgroundColor
+        public static Color BackgroundColor
         {
             get
             {
                 var str = ReadRegKey("BgColor");
                 if (string.IsNullOrWhiteSpace(str)) return Color.FromArgb(byte.MaxValue, 0, 104, byte.MaxValue);
-                var val = ColorConverter.ConvertFromString(str);
-                if (val == null) return Color.FromArgb(byte.MaxValue, 0, 104, byte.MaxValue);
-                if (val.GetType() != typeof(Color)) return Color.FromArgb(byte.MaxValue, 0, 104, byte.MaxValue);
-                return (Color) val;
+                var val = ColorTranslator.FromHtml(str);
+                return val;
             }
             set
             {
-                CreateRegKey("BgColor", value.ToString());
+                CreateRegKey("BgColor", ColorTranslator.ToHtml(value));
             }
         }
 
-        internal static double Transparency
+        public static double Transparency
         {
             get
             {
@@ -137,7 +138,7 @@ namespace Rapid_Reporter
             }
         }
 
-        internal static Version UpdateToSkip
+        public static Version UpdateToSkip
         {
             get
             {

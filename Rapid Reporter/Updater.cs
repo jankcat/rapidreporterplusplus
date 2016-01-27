@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Windows;
+using RapidLib;
 using Rapid_Reporter.Forms;
 using Rapid_Reporter.HTML;
 
