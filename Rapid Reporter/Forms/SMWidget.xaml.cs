@@ -15,7 +15,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Application = System.Windows.Forms.Application;
 using Color = System.Windows.Media.Color;
-using ColorConverter = System.Windows.Media.ColorConverter;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MenuItem = System.Windows.Controls.MenuItem;
 
@@ -48,10 +47,10 @@ namespace Rapid_Reporter.Forms
         // Timer to perform recurring actions (timing is set on windows load)
         static Timer _recurrenceTimer = new Timer();
         private static DispatcherTimer _sessionTimer = new DispatcherTimer();
-        private static int _sessionTicks = 0;
+        private static int _sessionTicks;
 
         private static bool _showScreenshotPreviews;
-        private static readonly ScreenShotPreview _screenShotPreviewForm = new ScreenShotPreview();
+        private static readonly ScreenShotPreview ScreenShotPreviewForm = new ScreenShotPreview();
 
         HotKey _hotKey;
 
@@ -70,11 +69,11 @@ namespace Rapid_Reporter.Forms
             RegUtil.InitReg();
             Logger.Record("[SMWidget]: App constructor. Initializing.", "SMWidget", "info");
 
-            var trans = GetTransparencyFromReg();
+            var trans = RegUtil.Transparency;
             InitializeComponent();
-            SetBgColor(GetBgColorFromReg());
+            SetBgColor(RegUtil.BackgroundColor);
             TransparencySlide.Value = trans;
-            var autoUpdate = Updater.GetUpdateCheckingEnabledValue();
+            var autoUpdate = RegUtil.CheckForUpdates;
             AutoUpdate.IsChecked = autoUpdate;
             TimerDisplay.Text = "00:00";
             _showScreenshotPreviews = RegUtil.ScreenShotPreviewEnabled;
@@ -152,7 +151,9 @@ namespace Rapid_Reporter.Forms
         private void TransparencySlide_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             Logger.Record("[TransparencySlide_ValueChanged]: Changing transparency to " + e.NewValue, "SMWidget", "config");
-            SetTransparency(e.NewValue);
+            RegUtil.Transparency = e.NewValue;
+            SMWidgetForm.Opacity = e.NewValue;
+            _ptn.Opacity = Math.Min(e.NewValue + 0.2, 1);
         }
 
         // Application can be moved around the screen, to keep it out of the way
@@ -440,7 +441,7 @@ namespace Rapid_Reporter.Forms
             var direct = Control.ModifierKeys == Keys.Control;
             if (edit || !direct)
             {
-                _screenShotPreviewForm.Hide();
+                ScreenShotPreviewForm.Hide();
                 WindowState = WindowState.Minimized;
             }
             Bitmap bmpOut;
@@ -481,8 +482,8 @@ namespace Rapid_Reporter.Forms
             }
             else if (_showScreenshotPreviews)
             {
-                _screenShotPreviewForm.Show();
-                _screenShotPreviewForm.UpdateScreenshot(bmpOut);
+                ScreenShotPreviewForm.Show();
+                ScreenShotPreviewForm.UpdateScreenshot(bmpOut);
             }
 
             if (edit || !direct)
@@ -560,12 +561,12 @@ namespace Rapid_Reporter.Forms
         private void AutoUpdate_Checked(object sender, RoutedEventArgs e)
         {
             Logger.Record("[AutoUpdate_Checked]: Updating registry", "SMWidget", "info");
-            Updater.SetUpdateCheckingEnabledValue(true);
+            RegUtil.CheckForUpdates = true;
         }
         private void AutoUpdate_Unchecked(object sender, RoutedEventArgs e)
         {
             Logger.Record("[AutoUpdate_Unchecked]: Updating registry", "SMWidget", "info");
-            Updater.SetUpdateCheckingEnabledValue(false);
+            RegUtil.CheckForUpdates = false;
         }
 
         // Show or hide the enhanced notes window.
@@ -695,35 +696,8 @@ namespace Rapid_Reporter.Forms
 
         private void SetBgColor(Color color)
         {
-            RegUtil.CreateRegKey("BgColor", color.ToString());
+            RegUtil.BackgroundColor = color;
             MainGrid.Background = new SolidColorBrush(color);
-        }
-
-        private static Color GetBgColorFromReg()
-        {
-            var str = RegUtil.ReadRegKey("BgColor");
-            if (string.IsNullOrWhiteSpace(str))
-                return Color.FromArgb(byte.MaxValue, 0, 104, byte.MaxValue);
-            var obj = ColorConverter.ConvertFromString(str);
-            if (obj != null)
-                return (Color)obj;
-            return Color.FromArgb(byte.MaxValue, 0, 104, byte.MaxValue);
-        }
-
-        private void SetTransparency(Double transparency)
-        {
-            RegUtil.CreateRegKey("Transparency", transparency.ToString(CultureInfo.InvariantCulture));
-            SMWidgetForm.Opacity = transparency;
-            _ptn.Opacity = Math.Min(transparency + 0.2, 1);
-        }
-
-        private static double GetTransparencyFromReg()
-        {
-            var str = RegUtil.ReadRegKey("Transparency");
-            if (string.IsNullOrWhiteSpace(str))
-                return 1.0;
-            double trans;
-            return Double.TryParse(str, out trans) ? trans : 1.0;
         }
 
         private void ResumeSession_Click(object sender, RoutedEventArgs e)

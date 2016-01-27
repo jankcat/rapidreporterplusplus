@@ -1,17 +1,21 @@
-﻿using Microsoft.Win32;
+﻿using System;
+using System.Globalization;
+using Microsoft.Win32;
+using System.Windows.Media;
+using ColorConverter = System.Windows.Media.ColorConverter;
 
 namespace Rapid_Reporter
 {
     internal static class RegUtil
     {
-        internal const string RegBgColor = "BgColor";
+        private const string RegBgColor = "BgColor";
 
         internal static void InitReg()
         {
             Registry.CurrentUser.CreateSubKey("Software").CreateSubKey("RapidReporterPP");
         }
 
-        internal static void CreateRegKey(string name, string value)
+        private static void CreateRegKey(string name, string value)
         {
             var subKey = Registry.CurrentUser.CreateSubKey("Software").CreateSubKey("RapidReporterPP");
             if (subKey == null)
@@ -20,7 +24,7 @@ namespace Rapid_Reporter
             subKey.Close();
         }
 
-        internal static string ReadRegKey(string name)
+        private static string ReadRegKey(string name)
         {
             // ReSharper disable once SuggestVarOrType_SimpleTypes
             RegistryKey registryKey = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("RapidReporterPP");
@@ -78,11 +82,81 @@ namespace Rapid_Reporter
                 if (string.IsNullOrWhiteSpace(str)) return false;
                 bool val;
                 var succcess = bool.TryParse(str, out val);
-                return succcess && val;
+                return succcess && val; // false if failed
             }
             set
             {
                 CreateRegKey("ScreenShotPreviewEnabled", value.ToString());
+            }
+        }
+
+        internal static bool CheckForUpdates
+        {
+            get
+            {
+                var str = ReadRegKey("CheckForUpdates");
+                if (string.IsNullOrWhiteSpace(str)) return true;
+                bool val;
+                var succcess = bool.TryParse(str, out val);
+                return !succcess || val; // true if failed
+            }
+            set
+            {
+                CreateRegKey("CheckForUpdates", value.ToString());
+            }
+        }
+
+        internal static Color BackgroundColor
+        {
+            get
+            {
+                var str = ReadRegKey("BgColor");
+                if (string.IsNullOrWhiteSpace(str)) return Color.FromArgb(byte.MaxValue, 0, 104, byte.MaxValue);
+                var val = ColorConverter.ConvertFromString(str);
+                if (val == null) return Color.FromArgb(byte.MaxValue, 0, 104, byte.MaxValue);
+                if (val.GetType() != typeof(Color)) return Color.FromArgb(byte.MaxValue, 0, 104, byte.MaxValue);
+                return (Color) val;
+            }
+            set
+            {
+                CreateRegKey("BgColor", value.ToString());
+            }
+        }
+
+        internal static double Transparency
+        {
+            get
+            {
+                var str = ReadRegKey("Transparency");
+                if (string.IsNullOrWhiteSpace(str)) return 1.0;
+                double val;
+                var succcess = double.TryParse(str, out val);
+                return succcess ? val : 1.0;
+            }
+            set
+            {
+                CreateRegKey("Transparency", value.ToString(CultureInfo.InvariantCulture));
+            }
+        }
+
+        internal static Version UpdateToSkip
+        {
+            get
+            {
+                var str = ReadRegKey("UpdateToSkip");
+                if (string.IsNullOrWhiteSpace(str)) return new Version(0, 0, 0, 0);
+                try
+                {
+                    return new Version(str);
+                }
+                catch
+                {
+                    return new Version(0, 0, 0, 0);
+                }
+            }
+            set
+            {
+                CreateRegKey("UpdateToSkip", value.ToString());
             }
         }
     }
