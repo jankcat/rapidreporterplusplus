@@ -3,14 +3,14 @@ using System.IO;
 using System.Net;
 using System.Text;
 
-namespace Rapid_Reporter.HTML
+namespace RapidLib.HTTP
 {
-    internal static class HttpCallUtil
+    public static class HttpCallUtil
     {
         internal const int DefaultTimeout = 300000;
         internal const string DefaultAcceptType = "text/plain";
 
-        internal static HttpResult HttpGetCall(string url)
+        public static HttpResult HttpGetCall(string url)
         {
             var result = new HttpResult();
 

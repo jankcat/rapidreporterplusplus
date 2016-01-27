@@ -2,8 +2,8 @@
 using System.Reflection;
 using System.Windows;
 using RapidLib;
+using RapidLib.HTTP;
 using Rapid_Reporter.Forms;
-using Rapid_Reporter.HTML;
 
 namespace Rapid_Reporter
 {
@@ -65,8 +65,7 @@ namespace Rapid_Reporter
 
         private static Version GetServerVersion()
         {
-            //var verCall = HttpCallUtil.HttpGetCall(@"https://raw.githubusercontent.com/jankcat/rapidreporterplusplus/development/currentVersion.txt"); //development
-            var verCall = HttpCallUtil.HttpGetCall(@"https://raw.githubusercontent.com/jankcat/rapidreporterplusplus/master/currentVersion.txt"); //master
+            var verCall = HttpCallUtil.HttpGetCall(@"https://raw.githubusercontent.com/jankcat/rapidreporterplusplus/master/currentVersion.txt");
             if (string.IsNullOrWhiteSpace(verCall.Message)) return null;
             var ver = verCall.Message.Split(Convert.ToChar("."));
             if (ver.Length != 4) return null;

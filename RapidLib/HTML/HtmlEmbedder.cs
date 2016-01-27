@@ -4,11 +4,11 @@ using System.Text;
 
 // ReSharper disable EmptyGeneralCatchClause
 
-namespace Rapid_Reporter.HTML
+namespace RapidLib.HTML
 {
-    internal static class HtmlEmbedder
+    public static class HtmlEmbedder
     {
-        internal static string BuildSessionRow_Img(int imgCount, string imgFile)
+        public static string BuildSessionRow_Img(int imgCount, string imgFile)
         {
             var str = MakeImageSrcData(imgFile);
             return
@@ -17,7 +17,7 @@ namespace Rapid_Reporter.HTML
                     imgCount, str, "&nbsp;");
         }
 
-        internal static string BuildPopUp_Img(int imgCount)
+        public static string BuildPopUp_Img(int imgCount)
         {
             return
                 string.Format(
@@ -25,14 +25,14 @@ namespace Rapid_Reporter.HTML
                     imgCount, "position: absolute; top: 40px; left: 5px; right: 0; bottom: 0; display:none;");
         }
 
-        internal static string BuildSessionRow_PTNote(int noteCount)
+        public static string BuildSessionRow_PTNote(int noteCount)
         {
             return
                 string.Format("<a href=\"#\" onclick=\"ShowPlaintextNote('ptndiv{0}');\">Click to show note...</a>{1}",
                     noteCount, "&nbsp;");
         }
 
-        internal static string BuildPopUp_PTNote(int noteCount, string noteFile)
+        public static string BuildPopUp_PTNote(int noteCount, string noteFile)
         {
             var plainTextNote = GetPlainTextNote(noteFile);
             return
@@ -42,7 +42,7 @@ namespace Rapid_Reporter.HTML
                     plainTextNote);
         }
 
-        internal static string MakeImageSrcData(string filename)
+        private static string MakeImageSrcData(string filename)
         {
             try
             {

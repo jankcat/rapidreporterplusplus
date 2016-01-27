@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Rapid_Reporter.HTML;
+using RapidLib.HTML;
 
 // ReSharper disable EmptyGeneralCatchClause
 
@@ -186,11 +186,11 @@ namespace Rapid_Reporter
                 var imgCount = 0;
                 var ptnCount = 0;
                 var t = "th";
-                var title = string.Format("{0}{1}", ScenarioId, Htmlstrings.HtmlTitle);
+                var title = string.Format("{0}{1}", ScenarioId, HtmlStrings.HtmlTitle);
                 File.Delete(htmlFileFull);
-                var htmlTop = string.Format("{0}{1}{2}{3}{4}{5}{6}{1}{7}", Htmlstrings.Head,
-                    title, Htmlstrings.TitleEnd, Htmlstrings.StyleSheet, Htmlstrings.Javascript,
-                    Htmlstrings.SharePointMeta, Htmlstrings.Body, Htmlstrings.Table);
+                var htmlTop = string.Format("{0}{1}{2}{3}{4}{5}{6}{1}{7}", HtmlStrings.Head,
+                    title, HtmlStrings.TitleEnd, HtmlStrings.StyleSheet, HtmlStrings.Javascript,
+                    HtmlStrings.SharePointMeta, HtmlStrings.Body, HtmlStrings.Table);
                 var topNotes = "";
                 var bottomNotes = "";
 
@@ -242,7 +242,7 @@ namespace Rapid_Reporter
                 topNotes = topNotes + BuildTableRow("td", "", "", "");
                 var output = htmlTop +
                              string.Format("{0}{1}{2}{3}{4}", topNotes, bottomNotes,
-                                 Htmlstrings.TableEnd, htmlFileBufferPopups, Htmlstrings.Foot);
+                                 HtmlStrings.TableEnd, htmlFileBufferPopups, HtmlStrings.Foot);
 
                 File.WriteAllText(htmlFileFull, output, Encoding.UTF8);
                 RemoveOldCsvFile(csvFileFull);

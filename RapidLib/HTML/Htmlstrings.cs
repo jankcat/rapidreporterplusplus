@@ -1,6 +1,6 @@
-namespace Rapid_Reporter.HTML
+namespace RapidLib.HTML
 {
-	public static class Htmlstrings
+	public static class HtmlStrings
 	{
         public static string HtmlTitle = ": Session Report";
         public static string Head;
@@ -13,7 +13,7 @@ namespace Rapid_Reporter.HTML
         public static string TableEnd;
         public static string Foot;
 
-        static Htmlstrings()
+        static HtmlStrings()
         {
 
 

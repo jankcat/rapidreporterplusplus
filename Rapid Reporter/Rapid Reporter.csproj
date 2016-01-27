@@ -80,7 +80,6 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
@@ -136,10 +135,6 @@
     <Compile Include="Forms\UpdateForm.Designer.cs">
       <DependentUpon>UpdateForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="HTML\HTMLEmbedder.cs" />
-    <Compile Include="HTML\Htmlstrings.cs" />
-    <Compile Include="HTML\HttpCallUtil.cs" />
-    <Compile Include="HTML\HttpResult.cs" />
     <Compile Include="KeyboardHook.cs" />
     <Compile Include="ScreenShot.cs" />
   </ItemGroup>
