@@ -14,6 +14,7 @@ using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using RapidLib;
+using RapidLib.Forms;
 using Application = System.Windows.Forms.Application;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MenuItem = System.Windows.Controls.MenuItem;

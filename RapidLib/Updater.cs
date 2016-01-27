@@ -1,27 +1,26 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reflection;
-using System.Windows;
-using RapidLib;
+using RapidLib.Forms;
 using RapidLib.HTTP;
-using Rapid_Reporter.Forms;
 
-namespace Rapid_Reporter
+namespace RapidLib
 {
-    internal static class Updater
+    public static class Updater
     {
-        internal static void ManualCheckVersion()
+        public static void ManualCheckVersion()
         {
             var parsedVersion = GetServerVersion();
             if (parsedVersion == null)
             {
                 RegUtil.UpdateToSkip = new Version(0, 0, 0, 0);
-                MessageBox.Show("Unable to retrieve latest version number from GitHub.");
+                MessageBoxForm.Alert("Unable to retrieve latest version number from GitHub.", "Updater");
                 return;
             }
             if (UpToDateWithLatest(parsedVersion))
             {
                 RegUtil.UpdateToSkip = new Version(0, 0, 0, 0);
-                MessageBox.Show("You are currently up to date!\r\nWe will let you know if a new version comes down the pipeline.");
+                MessageBoxForm.Alert("You are currently up to date!\r\nWe will let you know if a new version comes down the pipeline.", "Updater");
                 return;
             }
             ShowUpdateDlg(parsedVersion);
@@ -36,7 +35,7 @@ namespace Rapid_Reporter
             {
                 case UpdateChosen.Update:
                     RegUtil.UpdateToSkip = new Version(0, 0, 0, 0);
-                    System.Diagnostics.Process.Start("https://github.com/jankcat/rapidreporterplusplus/releases");
+                    Process.Start("https://github.com/jankcat/rapidreporterplusplus/releases");
                     return;
                 case UpdateChosen.Skip:
                     RegUtil.UpdateToSkip = parsedVersion;
@@ -47,7 +46,7 @@ namespace Rapid_Reporter
             }
         }
 
-        internal static void CheckVersion()
+        public static void CheckVersion()
         {
             var parsedVersion = GetServerVersion();
             if (parsedVersion == null) return;

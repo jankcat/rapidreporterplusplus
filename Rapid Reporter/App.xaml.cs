@@ -5,5 +5,9 @@
     /// </summary>
     public partial class App
     {
+        App()
+        {
+            
+        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Rapid_Reporter.Forms
+namespace RapidLib.Forms
 {
     public partial class AboutForm : Form
     {

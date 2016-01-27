@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Rapid_Reporter.Forms
+namespace RapidLib.Forms
 {
     public partial class UpdateForm : Form
     {
         private Version _serverVersion;
-        internal UpdateChosen Choice = UpdateChosen.Later;
+        public UpdateChosen Choice = UpdateChosen.Later;
 
         public UpdateForm()
         {
@@ -19,7 +19,7 @@ namespace Rapid_Reporter.Forms
             myver.Text = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
-        internal void UpdateServerVersion(Version version)
+        public void UpdateServerVersion(Version version)
         {
             _serverVersion = version;
             serverver.Text = (_serverVersion == null) ? "Cannot retrieve version" : _serverVersion.ToString();

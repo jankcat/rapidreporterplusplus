@@ -1,4 +1,4 @@
-﻿namespace Rapid_Reporter.Forms
+﻿namespace RapidLib
 {
     public enum UpdateChosen
     {

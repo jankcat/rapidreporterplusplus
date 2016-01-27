@@ -14,7 +14,8 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <ApplicationIcon>Forms\RapidReporter.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
     <StartupObject>Rapid_Reporter.App</StartupObject>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <ManifestCertificateThumbprint>B5913A50919FAE175288320B378EFC8B3A7CA283</ManifestCertificateThumbprint>
@@ -87,12 +88,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Forms\AboutForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\AboutForm.Designer.cs">
-      <DependentUpon>AboutForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\PlainTextNote.xaml.cs">
       <DependentUpon>PlainTextNote.xaml</DependentUpon>
     </Compile>
@@ -115,7 +110,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
-    <Compile Include="Updater.cs" />
     <Page Include="Forms\PlainTextNote.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -128,13 +122,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Forms\UpdateChosen.cs" />
-    <Compile Include="Forms\UpdateForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\UpdateForm.Designer.cs">
-      <DependentUpon>UpdateForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="KeyboardHook.cs" />
     <Compile Include="ScreenShot.cs" />
   </ItemGroup>
@@ -143,39 +130,14 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <EmbeddedResource Include="Forms\AboutForm.resx">
-      <DependentUpon>AboutForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ScreenShotPreview.resx">
       <DependentUpon>ScreenShotPreview.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SnippetForm.resx">
       <DependentUpon>SnippetForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\UpdateForm.resx">
-      <DependentUpon>UpdateForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
@@ -211,7 +173,47 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Forms\RapidReporter.ico" />
+    <PublishFile Include="RapidReporter++.exe.config">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Auto</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="RapidReporter++.exe.manifest">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Auto</PublishState>
+      <IncludeHash>False</IncludeHash>
+      <FileType>ManifestEntryPoint</FileType>
+    </PublishFile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RapidLib\RapidLib.csproj">
+      <Project>{b80dd8af-b8d5-41b7-be9c-c70e74293de6}</Project>
+      <Name>RapidLib</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Forms\20raw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Forms\32raw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Forms\exit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Forms\exit32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Forms\help.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Forms\iconnotes.png" />
@@ -235,40 +237,6 @@
     <Resource Include="Forms\icontimer.png" />
   </ItemGroup>
   <ItemGroup>
-    <PublishFile Include="RapidReporter++.exe.config">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Auto</PublishState>
-      <IncludeHash>False</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="RapidReporter++.exe.manifest">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Auto</PublishState>
-      <IncludeHash>False</IncludeHash>
-      <FileType>ManifestEntryPoint</FileType>
-    </PublishFile>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Forms\20raw.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Forms\exit.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Forms\exit32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Forms\32raw.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Forms\paintbrush.png" />
   </ItemGroup>
   <ItemGroup>
@@ -278,16 +246,10 @@
     <Resource Include="Forms\play.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Forms\RapidReporter.ico" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Forms\update.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Forms\help.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\RapidLib\RapidLib.csproj">
-      <Project>{b80dd8af-b8d5-41b7-be9c-c70e74293de6}</Project>
-      <Name>RapidLib</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
