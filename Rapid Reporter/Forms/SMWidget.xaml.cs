@@ -438,7 +438,11 @@ namespace Rapid_Reporter.Forms
             Logger.Record("[ScreenShot_Click]: Capturing screen", "SMWidget", "info");
             var edit = Control.ModifierKeys == Keys.Shift;
             var direct = Control.ModifierKeys == Keys.Control;
-            if (edit || !direct) WindowState = WindowState.Minimized;
+            if (edit || !direct)
+            {
+                _screenShotPreviewForm.Hide();
+                WindowState = WindowState.Minimized;
+            }
             Bitmap bmpOut;
             var ss = new ScreenShot();
             if (!direct && !edit)
@@ -453,7 +457,10 @@ namespace Rapid_Reporter.Forms
             }
             if (ss.Canceled)
             {
-                if (edit || !direct) WindowState = WindowState.Normal;
+                if (edit || !direct)
+                {
+                    WindowState = WindowState.Normal;
+                }
                 Logger.Record("[ScreenShot_Click]: Cancelled screenshot", "SMWidget", "info");
                 return;
             }
@@ -478,7 +485,10 @@ namespace Rapid_Reporter.Forms
                 _screenShotPreviewForm.UpdateScreenshot(bmpOut);
             }
 
-            if (edit || !direct) WindowState = WindowState.Normal; 
+            if (edit || !direct)
+            {
+                WindowState = WindowState.Normal;
+            } 
         }
 
         // Adding attached screenshot have dedicated functions that deal with the visual
