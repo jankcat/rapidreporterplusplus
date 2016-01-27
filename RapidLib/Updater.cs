@@ -58,7 +58,7 @@ namespace RapidLib
 
         private static bool UpToDateWithLatest(Version latest)
         {
-            var appVersion = Assembly.GetExecutingAssembly().GetName().Version;
+            var appVersion = Assembly.GetEntryAssembly().GetName().Version;
             return appVersion >= latest;
         }
 

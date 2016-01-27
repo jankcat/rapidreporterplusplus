@@ -4,9 +4,8 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using RapidLib;
 
-namespace Rapid_Reporter.Forms
+namespace RapidLib.Forms
 {
     public partial class ScreenShotPreview : Form
     {
@@ -26,7 +25,7 @@ namespace Rapid_Reporter.Forms
             RegUtil.ScreenShotPreviewY = Top;
         }
 
-        internal void UpdateScreenshot(Bitmap image)
+        public void UpdateScreenshot(Bitmap image)
         {
             image = (Bitmap)ScaleImage(image, 350, 250);
             using (var s = new MemoryStream())

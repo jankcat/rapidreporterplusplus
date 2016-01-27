@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace RapidLib.Forms
@@ -16,7 +17,7 @@ namespace RapidLib.Forms
         private void UpdateForm_Load(object sender, EventArgs e)
         {
             serverver.Text = (_serverVersion == null) ? "Cannot retrieve version" : _serverVersion.ToString();
-            myver.Text = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            myver.Text = Assembly.GetEntryAssembly().GetName().Version.ToString();
         }
 
         public void UpdateServerVersion(Version version)
