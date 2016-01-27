@@ -80,7 +80,7 @@ namespace Rapid_Reporter.Forms
             ShowScreenshotPreviews.IsChecked = _showScreenshotPreviews;
             _ptn.InitializeComponent();
             _ptn.Sm = this;
-            Task.Run((Action)Updater.CheckVersion);
+            Task.Factory.StartNew(Updater.CheckVersion);
             NoteContent.Focus();
             Logger.Record("[SMWidget]: App constructor initialized and CLI executed.", "SMWidget", "info");
         }
