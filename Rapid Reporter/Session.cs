@@ -102,17 +102,18 @@ namespace Rapid_Reporter
         // Notes are always saved on file, not only when program exists (so no data loss in case of crash)
 
         // UpdateNotes: There are two overloads: One receives all strings (custom messages), the other an int (typed messages)
-        internal void UpdateNotes(int type, string note, string screenshot, string rtfNote)
+        internal void UpdateNotes(int type, string note)
         {
-            UpdateNotes(NoteTypes[type], note, screenshot, rtfNote);
-            Logger.Record("[UpdateNotes isss]: Note added to session log. Attachments: (" + (screenshot.Length > 0) + " | " + (rtfNote.Length > 0) + ")", "Session", "info");
+            UpdateNotes(NoteTypes[type], note);
+            Logger.Record("[UpdateNotes isss]: Note added to session log.", "Session", "info");
         }
-        internal void UpdateNotes(string type, string note, string screenshot = "", string rtfNote = "")
+        internal void UpdateNotes(string type, string note)
         {
-            SessionNote = DateTime.Now + "," + type + ",\"" + note + "\"," + rtfNote + "\n";
+            SessionNote = DateTime.Now + "," + type + ",\"" + note + "\"\n";
             SaveToSessionNotes(SessionNote);
-            Logger.Record("[UpdateNotes ss]: Note added to session log (" + screenshot + ", " + rtfNote + ")", "Session", "info");
+            Logger.Record("[UpdateNotes ss]: Note added to session log", "Session", "info");
         }
+
         // Save all notes on file, after every single note
         private void SaveToSessionNotes(string note)
         {

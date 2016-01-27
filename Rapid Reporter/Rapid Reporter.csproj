@@ -117,6 +117,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
+    <Compile Include="Note.cs" />
     <Compile Include="Updater.cs" />
     <Page Include="Forms\PlainTextNote.xaml">
       <Generator>MSBuild:Compile</Generator>

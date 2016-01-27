@@ -240,7 +240,7 @@ namespace Rapid_Reporter.Forms
                                     //  - 2) We add to the history context menu
                                     //  - 3) We clear notes and attachments to make place for new ones
                                     /*1*/
-                                    _currentSession.UpdateNotes(_currentNoteType, NoteContent.Text.Replace("\"", "''").Replace(",", ";").Trim(), _screenshotName, PlainTextNoteName);
+                                    _currentSession.UpdateNotes(_currentNoteType, NoteContent.Text.Replace("\"", "''").Replace(",", ";").Trim());
                                     /*2*/   var item = new MenuItem {Header = NoteContent.Text};
                                     item.Click += delegate { GetHistory(item.Header.ToString()); };
                                     NoteHistory.Items.Add(item);

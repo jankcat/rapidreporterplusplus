@@ -8,8 +8,6 @@ namespace Rapid_Reporter
 {
     internal static class RegUtil
     {
-        private const string RegBgColor = "BgColor";
-
         internal static void InitReg()
         {
             Registry.CurrentUser.CreateSubKey("Software").CreateSubKey("RapidReporterPP");
