@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using RapidLib.Forms;
-using Rapid_Reporter.Forms;
 
 // Code adapted from:
 // http://kseesharp.blogspot.com/2008/11/c-capture-screenshot.html

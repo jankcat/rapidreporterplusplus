@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -41,15 +42,57 @@ namespace RapidLib.Sessions
                     _sessionFiles.Add(noteFile);
                     break;
             }
-            var noteText = string.Format("{0},{1},\"{2}\"{3}", note.Time, note.Type, note.Contents, Environment.NewLine);
+            var noteText = string.Format("{0},{1},\"{2}\"{3}", note.Time.ToString("yyyyMMdd_HHmmss"), note.Type, note.Contents, Environment.NewLine);
             return OutputNoteLine(noteText);
         }
 
         public List<Note> GetAllNotes()
         {
             if (string.IsNullOrWhiteSpace(_fileName)) return new List<Note>();
-            // todo get notes from csv, to put into list
-            throw new NotImplementedException();
+            try
+            {
+                var notes = new List<Note>();
+                foreach (var line in File.ReadAllLines(_fileName, Encoding.UTF8))
+                {
+                    if ("" == line) continue;
+                    if (line.StartsWith(ColumnHeaders)) continue;
+                    var thisLine = line.Split(',');
+                    if (thisLine.Length <= 2) continue;
+                    var note = new Note {Contents = thisLine[2].Replace("\"", "")};
+                    try
+                    {
+                        note.Time = DateTime.ParseExact(thisLine[0], "yyyyMMdd_HHmmss", CultureInfo.InvariantCulture, DateTimeStyles.None);
+                    }
+                    catch
+                    {
+                        note.Time = DateTime.Now;
+                    }
+                    NoteTypes type;
+                    var success = Enum.TryParse(thisLine[1], true, out type);
+                    if (!success) type = NoteTypes.Unknown;
+                    note.Type = type;
+
+                    switch (note.Type)
+                    {
+                        case NoteTypes.ScreenShot:
+                            var img = InputScreenShotFile(note.Contents);
+                            if (img == null) continue;
+                            note.Contents = ImageUtil.BuildStringFromImage(img);
+                            break;
+                        case NoteTypes.PlainTextNote:
+                            var ptn = InputPlainTextNoteFile(note.Contents);
+                            if (ptn == null) continue;
+                            note.Contents = ptn;
+                            break;
+                    }
+                    notes.Add(note);
+                }
+                return notes;
+            }
+            catch
+            {
+                return new List<Note>();
+            }
         }
 
         public bool DeleteSessionData()
@@ -126,12 +169,36 @@ namespace RapidLib.Sessions
         {
             try
             {
-                File.WriteAllText(file, note);
+                File.WriteAllText(file, note, Encoding.UTF8);
                 return true;
             }
             catch
             {
                 return false;
+            }
+        }
+
+        private static Image InputScreenShotFile(string file)
+        {
+            try
+            {
+                return Image.FromFile(file);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static string InputPlainTextNoteFile(string file)
+        {
+            try
+            {
+                return File.ReadAllText(file, Encoding.UTF8);
+            }
+            catch
+            {
+                return null;
             }
         }
 
