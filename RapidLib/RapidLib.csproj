@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CsvSessionWriter.cs" />
     <Compile Include="Forms\AboutForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -58,11 +59,23 @@
     <Compile Include="Forms\MessageBoxForm.Designer.cs">
       <DependentUpon>MessageBoxForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\PlainTextNoteForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PlainTextNoteForm.Designer.cs">
+      <DependentUpon>PlainTextNoteForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\ScreenShotPreview.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\ScreenShotPreview.Designer.cs">
       <DependentUpon>ScreenShotPreview.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SnippetForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SnippetForm.Designer.cs">
+      <DependentUpon>SnippetForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\UpdateForm.cs">
       <SubType>Form</SubType>
@@ -70,13 +83,21 @@
     <Compile Include="Forms\UpdateForm.Designer.cs">
       <DependentUpon>UpdateForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="HtmlOutputWriter.cs" />
     <Compile Include="HTML\HtmlEmbedder.cs" />
     <Compile Include="HTML\Htmlstrings.cs" />
     <Compile Include="HTTP\HttpCallUtil.cs" />
     <Compile Include="HTTP\HttpResult.cs" />
+    <Compile Include="ISessionOutputWriter.cs" />
+    <Compile Include="ISessionWriter.cs" />
+    <Compile Include="Note.cs" />
+    <Compile Include="NoteTypes.cs" />
     <Compile Include="PortUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegUtil.cs" />
+    <Compile Include="Session.cs" />
+    <Compile Include="SessionDetails.cs" />
+    <Compile Include="SessionStartingStages.cs" />
     <Compile Include="UpdateChosen.cs" />
     <Compile Include="Updater.cs" />
   </ItemGroup>
@@ -87,8 +108,14 @@
     <EmbeddedResource Include="Forms\MessageBoxForm.resx">
       <DependentUpon>MessageBoxForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PlainTextNoteForm.resx">
+      <DependentUpon>PlainTextNoteForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ScreenShotPreview.resx">
       <DependentUpon>ScreenShotPreview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SnippetForm.resx">
+      <DependentUpon>SnippetForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\UpdateForm.resx">
       <DependentUpon>UpdateForm.cs</DependentUpon>

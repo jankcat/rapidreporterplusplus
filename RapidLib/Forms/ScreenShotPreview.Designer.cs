@@ -59,6 +59,7 @@
             this.MinimizeBox = false;
             this.Name = "ScreenShotPreview";
             this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.Text = "Screen Shot Preview";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ScreenShotPreview_FormClosing);
             this.Move += new System.EventHandler(this.ScreenShotPreview_Move);

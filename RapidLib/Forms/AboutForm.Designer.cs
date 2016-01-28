@@ -89,6 +89,7 @@
             this.Controls.Add(this.appVer);
             this.Controls.Add(this.appName);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "AboutForm";

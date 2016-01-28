@@ -4,6 +4,7 @@ namespace RapidLib.HTML
 	{
         public static string HtmlTitle = ": Session Report";
         public static string Head;
+        public static string TitleStart;
         public static string TitleEnd;
         public static string StyleSheet;
         public static string Javascript;
@@ -20,11 +21,13 @@ namespace RapidLib.HTML
 
             Table =
                 "\r\n            </h1>\r\n            <!--[if IE]><h5>For best results, use Chrome or Firefox.</h5><![endif]-->\r\n" +
-                "            <div id=\"aroundtable\">\r\n                <table border=\"1\">\r\n";
+                "            <div id=\"aroundtable\">\r\n                <table border=\"1\">\r\n" +
+                "<tr class=\"Type\"> <td class=\"timestamp\">Time</td><td class=\"notetype\">Type</td><td>Content</td></tr>\n";
 
             Head =
                 "<html xmlns:mso=\"urn:schemas-microsoft-com:office:office\" xmlns:msdt=\"uuid:C2F41010-65B3-11d1-A29F-00AA00C14882\">\r\n    <head>\r\n" +
-                "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\r\n        <!--RR++V2.7-->\r\n        <title>";
+                "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\r\n        <!--RR++V";
+            TitleStart = "-->\r\n        <title>";
             TitleEnd = "</title>\r\n";
             Body = "    <body>\r\n        <div id=\"allbody\">\r\n            <h1>";
             TableEnd = "\r\n                </table>\r\n            </div>\r\n";

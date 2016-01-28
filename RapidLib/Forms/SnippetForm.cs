@@ -5,7 +5,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
 
-namespace Rapid_Reporter.Forms
+namespace RapidLib.Forms
 {
     public partial class SnippetForm : Form
     {
@@ -97,7 +97,10 @@ namespace Rapid_Reporter.Forms
             var img = new Bitmap(width, height);
             var g = Graphics.FromImage(img);
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+            // Got a monotodo from this in 2.8 regarding libgdiplus, but not too worried. Maybe will affect the screenshot quality on mac?
+            g.PixelOffsetMode = PixelOffsetMode.HighQuality; 
+
             g.CompositingQuality = CompositingQuality.HighQuality;
             g.DrawImage(originalImage, 0, 0, rect, GraphicsUnit.Pixel);
             Snippet = img;
