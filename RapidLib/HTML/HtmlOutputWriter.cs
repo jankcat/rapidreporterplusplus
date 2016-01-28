@@ -1,5 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Windows.Forms;
 using RapidLib.Sessions;
 
 namespace RapidLib.HTML
@@ -53,9 +57,19 @@ namespace RapidLib.HTML
             var output = string.Format("{0}{1}{2}{3}{4}{5}", htmlTop, topNotes, bottomNotes, HtmlStrings.TableEnd,
                 bottomPopups, HtmlStrings.Foot);
 
-            //TODO Prompt Save Path, Delete file if existing, check if we can write.
+            var badChars = (new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars()));
+            var fileName = string.Format("{0} - {1}.htm", details.StartingTime, details.ScenarioId);
+            var safeName = badChars.Aggregate(fileName, (current, c) => current.Replace(c.ToString(CultureInfo.InvariantCulture), ""));
+            var path = Path.Combine(Application.StartupPath, safeName);
+            var saveFileDialog = new SaveFileDialog
+            {
+                DefaultExt = "htm",
+                FileName = safeName,
+                InitialDirectory = Application.StartupPath
+            };
+            if (saveFileDialog.ShowDialog() == DialogResult.OK) path = saveFileDialog.FileName;
 
-            throw new System.NotImplementedException();
+            return SaveHtmlFile(path, output);
         }
 
         private static string BuildTableRow(Note note, bool blank = false)
@@ -67,28 +81,25 @@ namespace RapidLib.HTML
                     Note.GetTypeName(note.Type), note.Time, note.Contents);
         }
 
+        private static bool SaveHtmlFile(string path, string contents)
+        {
+            try
+            {
+                File.Delete(path);
+                File.WriteAllText(path, contents, Encoding.UTF8);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public List<Note> InputSessionFromOutput(out SessionDetails details)
         {
-            // TODO this to resume sessions that have been HTMLd
+            // TODO this to resume sessions that have been HTMLd. LATER
             throw new System.NotImplementedException();
         }
 
-        //private string DiscoverSavePath(string csvFile)
-        //{
-        //    var str1 =
-        //        (new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars())).Aggregate(
-        //            string.Format("{0} - {1}.htm", Path.GetFileNameWithoutExtension(csvFile), ScenarioId),
-        //            (current, c) => current.Replace(c.ToString(CultureInfo.InvariantCulture), ""));
-        //    var str2 = WorkingDir + str1;
-        //    var saveFileDialog1 = new SaveFileDialog
-        //    {
-        //        DefaultExt = "htm",
-        //        FileName = str1,
-        //        InitialDirectory = WorkingDir
-        //    };
-        //    if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-        //        str2 = saveFileDialog1.FileName;
-        //    return str2;
-        //}
     }
 }
