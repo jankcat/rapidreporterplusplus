@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using RapidLib;
 using RapidLib.Forms;
+using RapidLib.Sessions;
 using Application = System.Windows.Forms.Application;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MenuItem = System.Windows.Controls.MenuItem;
@@ -452,36 +453,6 @@ namespace Rapid_Reporter.Forms
         //  clues as well
         private void AddScreenshot2Note(Image bitmap)
         {
-
-            // Name the screenshot, save to disk
-            _screenshotName = _currentScreenshot++.ToString(CultureInfo.InvariantCulture) + "_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".jpg";
-            try
-            {
-                bitmap.Save(_currentSession.WorkingDir + _screenshotName, ImageFormat.Jpeg);
-                _currentSession.UpdateNotes("Screenshot", _screenshotName);
-                var item = new MenuItem
-                {
-                    Header = string.Format("Screenshot Saved! Filename: {0}", _screenshotName),
-                    IsEnabled = false
-                };
-                NoteHistory.Items.Add(item);
-                NoteHistory.Visibility = Visibility.Visible;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(string.Format(
-                    "Ouch! An error occured when trying to write the note into a file.\n" +
-                    "The file name is: {0}\n\n" + "Possible causes:\n" +
-                    " -- You don't have write permissions to the folder or file;\n" +
-                    " -- The file is locked by another program (Excel? Explorer preview?);\n" +
-                    " -- Windows preview pane is holding the file blocked for editing;\n" +
-                    " -- (there may be other reasons).\n\n" + "Possible solutions:\n" +
-                    " -- Set write permissions to the folder or file;\n" +
-                    " -- Close another application that may be using the file;\n" +
-                    " -- Select another file in explorer.\n\n" + "Exception details for investigation:\n{1}",
-                    _screenshotName, ex.Message));
-            }
-
             // Put a visual effect to remember the tester there's an image on the attachment barrel
             var effect = new BevelBitmapEffect {BevelWidth = 2, EdgeProfile = EdgeProfile.BulgedUp};
             ScreenShot.BitmapEffect = effect;

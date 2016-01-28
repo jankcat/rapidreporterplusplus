@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using RapidLib.HTML;
+using RapidLib.Sessions;
 
-namespace RapidLib
+namespace RapidLib.HTML
 {
     public class HtmlOutputWriter : ISessionOutputWriter
     {
@@ -30,7 +30,7 @@ namespace RapidLib
                         imgCount++;
                         break;
                     case NoteTypes.PlainTextNote:
-                        bottomPopups += HtmlEmbedder.BuildPopUp_PTNote(ptnCount, note.Contents);
+                        bottomPopups += HtmlEmbedder.BuildPopUp_PTNote(ptnCount, System.Net.WebUtility.HtmlEncode(note.Contents));
                         note.Contents = HtmlEmbedder.BuildSessionRow_PTNote(ptnCount);
                         bottomNotes += BuildTableRow(note);
                         ptnCount++;

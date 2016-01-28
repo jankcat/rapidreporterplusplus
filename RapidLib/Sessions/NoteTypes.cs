@@ -1,4 +1,4 @@
-﻿namespace RapidLib
+﻿namespace RapidLib.Sessions
 {
     public enum NoteTypes
     {

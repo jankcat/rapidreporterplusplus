@@ -2,19 +2,17 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using RapidLib.Images;
 
-namespace RapidLib
+namespace RapidLib.Sessions
 {
     public class CsvSessionWriter : ISessionWriter
     {
         private const string ColumnHeaders = "Time,Type,Content";
         private string _fileName = "";
-        private List<string> _sessionFiles = new List<string>();
+        private readonly List<string> _sessionFiles = new List<string>();
 
         public bool StartSession()
         {
@@ -25,60 +23,47 @@ namespace RapidLib
         public bool AddNote(Note note)
         {
             if (string.IsNullOrWhiteSpace(_fileName)) return false;
+            var path = Path.GetDirectoryName(_fileName);
+            if (string.IsNullOrWhiteSpace(path)) path = Application.StartupPath;
             switch (note.Type)
             {
                 case NoteTypes.ScreenShot:
+                    var imgFile = Path.Combine(path, string.Format("cap_{0}.png", DateTime.Now.ToString("yyyyMMdd_HHmmssfff")));
                     var img = ImageUtil.BuildImageFromString(note.Contents);
-                    var file = string.Format("cap_{0}.png", DateTime.Now.ToString("yyyyMMdd_HHmmssfff"));
-                    note.Contents = file;
-
+                    if (!OutputScreenShotFile(img, imgFile)) return false;
+                    note.Contents = imgFile;
+                    _sessionFiles.Add(imgFile);
                     break;
                 case NoteTypes.PlainTextNote:
+                    var noteFile = Path.Combine(path, string.Format("note_{0}.txt", DateTime.Now.ToString("yyyyMMdd_HHmmssfff")));
+                    if (!OutputPlainTextNoteFile(note.Contents, noteFile)) return false;
+                    note.Contents = noteFile;
+                    _sessionFiles.Add(noteFile);
                     break;
             }
-
-
-            // if plaintext:
-            // File.WriteAllText(string.Format("{0}.txt", DateTime.Now.ToString("yyyyMMdd_HHmmssfff")), safeNote);
-            // save contents to txt file, save file name to contents var
-            // add filename to _sessionFiles
-
-            // if screenshot/image:
-            // save contents to img file
-            // add filename to _sessionFiles
-
             var noteText = string.Format("{0},{1},\"{2}\"{3}", note.Time, note.Type, note.Contents, Environment.NewLine);
             return OutputNoteLine(noteText);
-            throw new NotImplementedException();
-        }
-
-        public SessionDetails ResumePausedSession()
-        {
-            //var csvFile = SelectSessionCsvForOpen();
-            //if (string.IsNullOrWhiteSpace(csvFile)) return false;
-            //LoadCsvIntoSession(csvFile);
-            //set filename var from selected file
-            throw new NotImplementedException();
-        }
-
-        public bool PauseSession()
-        {
-            if (string.IsNullOrWhiteSpace(_fileName)) return false;
-            throw new NotImplementedException();
         }
 
         public List<Note> GetAllNotes()
         {
             if (string.IsNullOrWhiteSpace(_fileName)) return new List<Note>();
-
-
+            // todo get notes from csv, to put into list
             throw new NotImplementedException();
         }
 
         public bool DeleteSessionData()
         {
-            //File.Delete(_fileName); and all _sessionFiles
-            throw new NotImplementedException();
+            try
+            {
+                foreach (var file in _sessionFiles) File.Delete(file);
+                File.Delete(_fileName);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public bool CanIWrite()
@@ -96,50 +81,57 @@ namespace RapidLib
             }
         }
 
+        public SessionDetails ResumePausedSession()
+        {
+            //var csvFile = SelectSessionCsvForOpen();
+            //if (string.IsNullOrWhiteSpace(csvFile)) return false;
+            //LoadCsvIntoSession(csvFile);
+            //set filename var from selected file
+            throw new NotImplementedException();
+        }
+
+        public bool PauseSession()
+        {
+            if (string.IsNullOrWhiteSpace(_fileName)) return false;
+            throw new NotImplementedException();
+        }
+
         private bool OutputNoteLine(string note)
         {
             try
             {
                 File.AppendAllText(_fileName, note, Encoding.UTF8);
+                return true;
             }
             catch
             {
                 return false;
             }
-            return true;
         }
 
-        private bool OutputScreenShotFile(Image img, string file)
+        private static bool OutputScreenShotFile(Image img, string file)
         {
             try
             {
-                var path = Path.GetDirectoryName(_fileName);
-                if (string.IsNullOrWhiteSpace(path)) path = Application.StartupPath;
-                file = Path.Combine(path, file);
-
                 img.Save(file, ImageFormat.Png);
-                _currentSession.UpdateNotes("Screenshot", _screenshotName);
-                var item = new MenuItem
-                {
-                    Header = string.Format("Screenshot Saved! Filename: {0}", _screenshotName),
-                    IsEnabled = false
-                };
-                NoteHistory.Items.Add(item);
-                NoteHistory.Visibility = Visibility.Visible;
+                return true;
             }
-            catch (Exception ex)
+            catch
             {
-                MessageBox.Show(string.Format(
-                    "Ouch! An error occured when trying to write the note into a file.\n" +
-                    "The file name is: {0}\n\n" + "Possible causes:\n" +
-                    " -- You don't have write permissions to the folder or file;\n" +
-                    " -- The file is locked by another program (Excel? Explorer preview?);\n" +
-                    " -- Windows preview pane is holding the file blocked for editing;\n" +
-                    " -- (there may be other reasons).\n\n" + "Possible solutions:\n" +
-                    " -- Set write permissions to the folder or file;\n" +
-                    " -- Close another application that may be using the file;\n" +
-                    " -- Select another file in explorer.\n\n" + "Exception details for investigation:\n{1}",
-                    _screenshotName, ex.Message));
+                return false;
+            }
+        }
+
+        private static bool OutputPlainTextNoteFile(string note, string file)
+        {
+            try
+            {
+                File.WriteAllText(file, note);
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 

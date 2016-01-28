@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace RapidLib
+namespace RapidLib.Sessions
 {
     public interface ISessionOutputWriter
     {

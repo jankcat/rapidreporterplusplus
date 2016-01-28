@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RapidLib
+namespace RapidLib.Sessions
 {
     public class Note
     {

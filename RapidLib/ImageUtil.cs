@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 
-namespace RapidLib.Images
+namespace RapidLib
 {
     public class ImageUtil
     {
@@ -24,7 +24,7 @@ namespace RapidLib.Images
             using (var ms = new MemoryStream(imageBytes, 0, imageBytes.Length))
             {
                 ms.Write(imageBytes, 0, imageBytes.Length);
-                var image = Image.FromStream(ms, true);
+                var image = Image.FromStream(ms);
                 return image;
             }
         }

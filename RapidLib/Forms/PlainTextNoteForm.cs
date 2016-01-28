@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using RapidLib.Sessions;
 
 namespace RapidLib.Forms
 {
@@ -33,13 +34,12 @@ namespace RapidLib.Forms
                 Close();
                 return;
             }
-            var safeNote = System.Net.WebUtility.HtmlEncode(noteText);
 
             var note = new Note
             {
                 Type = NoteTypes.PlainTextNote,
                 Time = DateTime.Now,
-                Contents = safeNote
+                Contents = noteText
             };
 
             _session.AddNote(note);

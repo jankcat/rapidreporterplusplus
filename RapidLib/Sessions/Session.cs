@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Globalization;
-using RapidLib.Images;
 
-namespace RapidLib
+namespace RapidLib.Sessions
 {
     public class Session
     {
