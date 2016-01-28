@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RapidReporterSharePointFix3
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RapidLib", "RapidLib\RapidLib.csproj", "{B80DD8AF-B8D5-41B7-BE9C-C70E74293DE6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{3171BD5F-49D1-4FDA-8E05-C9255D4038C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,6 +30,10 @@ Global
 		{B80DD8AF-B8D5-41B7-BE9C-C70E74293DE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B80DD8AF-B8D5-41B7-BE9C-C70E74293DE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B80DD8AF-B8D5-41B7-BE9C-C70E74293DE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3171BD5F-49D1-4FDA-8E05-C9255D4038C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3171BD5F-49D1-4FDA-8E05-C9255D4038C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3171BD5F-49D1-4FDA-8E05-C9255D4038C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3171BD5F-49D1-4FDA-8E05-C9255D4038C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
